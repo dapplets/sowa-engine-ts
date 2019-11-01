@@ -1,3 +1,7 @@
+import { FeaturesRegistry } from 'src/impl/featuresRegistry';
+import { DappletProvider } from 'src/interfaces/dappletProvider';
+
 export type ContextConfig = {
-    source: string;
+    provider: DappletProvider;
+    features: FeaturesRegistry;
 }

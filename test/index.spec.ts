@@ -1,14 +1,15 @@
 import 'mocha';
+import { expect } from "chai";
+
 import { DappletContext } from "../src/index";
-import { DappletRequest } from '../src/types/dappletRequest';
 
 
 describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', () => {
-  it('needs tests', () => {
+  it('needs tests', async () => {
 
-    const dappletContext = new DappletContext({ source: "github" });
+    const dappletContext = new DappletContext();
 
-    const dappletRequest: DappletRequest = {
+    const dappletRequest = {
       frames: [
         {
           dappletId: "1",
@@ -25,7 +26,9 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
       ]
     }
 
-    dappletContext.processRequest(dappletRequest);
+    const result = await dappletContext.processRequest(dappletRequest);
+
+    expect(result).to.be.not.null;
 
   })
 })

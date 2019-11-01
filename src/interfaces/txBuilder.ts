@@ -1,7 +1,7 @@
-import { Specifiable } from "./specifiable";
+import { Feature } from "./feature";
 import { State } from "../impl/core/state";
 
-export interface TxBuilder extends Specifiable {
+export interface TxBuilder extends Feature {
     txConfig: any;
     state: State;
     run(): Promise<any>; // async

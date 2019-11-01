@@ -3,7 +3,8 @@ import { DappletRequest } from "../../types/dappletRequest";
 import { DappletEngine } from "./dappletEngine";
 import { DappletActivity } from "../views/dappletActivity";
 import { ContextConfig } from 'src/types/contextConfig';
-import { GithubDappletProvider } from '../providers/githubDappletProvider';
+import { DEFAULT_CONFIG } from "../../defaultConfig";
+import { FeaturesRegistry } from '../featuresRegistry';
 
 // создается в момент старта кошелька и singleton
 // к нему приходят request'ы
@@ -12,23 +13,19 @@ import { GithubDappletProvider } from '../providers/githubDappletProvider';
 // instantated once on Wallet start
 export class DappletContext {
     private _dappletProvider: DappletProvider;
+    private _featuresRegistry: FeaturesRegistry;
 
-    constructor(config: ContextConfig) {
-        switch (config.source) {
-            case "github":
-                this._dappletProvider = new GithubDappletProvider();                
-                break;
-        
-            default:
-                this._dappletProvider = new GithubDappletProvider();    
-                break;
-        }
+    constructor(config?: ContextConfig) {
+        if (!config) config = DEFAULT_CONFIG;
+
+        this._dappletProvider = config.provider;
+        this._featuresRegistry = config.features;
     }
 
     //typeSupport: Map<PID,(rawData:string,type:PID)=>typedValue> = new Map
 
     async processRequest(request: DappletRequest) {
-        const engine = new DappletEngine(request);
+        const engine = new DappletEngine(request, this._featuresRegistry);
         await engine.load(this._dappletProvider);
         if (!engine.validate()) throw new Error("Invalid dapplet");
 
