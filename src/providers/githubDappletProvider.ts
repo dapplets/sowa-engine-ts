@@ -1,5 +1,5 @@
-import { DappletProvider } from 'src/interfaces/dappletProvider';
-import { DappletTemplate } from 'src/types/dappletTemplate';
+import { DappletProvider } from '../interfaces/dappletProvider';
+import { DappletTemplate } from '../types/dappletTemplate';
 import fetch from "node-fetch";
 
 export class GithubDappletProvider implements DappletProvider {

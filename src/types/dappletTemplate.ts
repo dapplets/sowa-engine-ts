@@ -7,11 +7,11 @@ export type DappletTemplate = {
         [key: string]: string[]
     };
 
-    // rel 2.0?
-    variables: {
-        //DiP-02.1: "name" is better than "key"?
-        [key: string]: string;
-    };
+    // // rel 2.0?
+    // variables: {
+    //     //DiP-02.1: "name" is better than "key"?
+    //     [key: string]: string;
+    // };
 
     views: ViewTemplate[];
 
