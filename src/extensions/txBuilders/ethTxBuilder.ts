@@ -1,6 +1,6 @@
 import { TxBuilder } from "../../interfaces/txBuilder";
 import { State } from "../../core/state";
-import { TxTemplate } from 'src/types/txTemplate';
+import { TxTemplate } from '../../types/txTemplate';
 
 export class EthTxBuilder implements TxBuilder {
     public static readonly REG_KEYS = ["http://types.dapplets.org/ethereum/txbuilders/solidity/1.0"];

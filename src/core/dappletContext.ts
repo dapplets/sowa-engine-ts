@@ -2,10 +2,11 @@ import { DappletProvider } from "../interfaces/dappletProvider";
 import { DappletRequest } from "../types/dappletRequest";
 import { DappletEngine } from "./dappletEngine";
 import { DappletActivity } from "./dappletActivity";
-import { ContextConfig } from 'src/types/contextConfig';
+import { ContextConfig } from '../types/contextConfig';
 import { DEFAULT_CONFIG } from "../defaultConfig";
 import { FeaturesRegistry } from './featuresRegistry';
 import { DappletTxResult } from '../interfaces/dappletTxResult';
+import { FrameStatus } from '../types/statusEnum';
 
 // создается в момент старта кошелька и singleton
 // к нему приходят request'ы
@@ -18,7 +19,6 @@ export class DappletContext {
 
     constructor(config: ContextConfig = DEFAULT_CONFIG) {
         config = { ...DEFAULT_CONFIG, ...config };
-
         this._dappletProvider = config.provider!;
         this._featuresRegistry = config.features!;
     }
@@ -27,6 +27,7 @@ export class DappletContext {
 
     async processRequest(request: DappletRequest): Promise<DappletTxResult> {
         const engine = new DappletEngine(request, this._featuresRegistry);
+        engine.onStatusChanged((statuses) => console.log(statuses.map(s => FrameStatus[s]).join(", ")));
         await engine.load(this._dappletProvider);
         engine.validate();
         

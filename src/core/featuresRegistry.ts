@@ -1,4 +1,4 @@
-import { Type } from 'src/types/type';
+import { Type } from '../types/type';
 
 export class FeaturesRegistry {
 

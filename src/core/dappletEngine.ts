@@ -6,7 +6,7 @@ import { FeaturesRegistry } from './featuresRegistry';
 
 export class DappletEngine {
     private _frameExecutors: DappletFrameExecutor[] = [];
-    private _statusChangedHandler: (readiness: number) => void = () => {};
+    private _statusChangedHandler: (statuses: FrameStatus[]) => void = () => {};
 
     constructor(dappletRequest: DappletRequest, featuresRegistry: FeaturesRegistry) {
         for (const frame of dappletRequest.frames) {
@@ -36,11 +36,12 @@ export class DappletEngine {
         await Promise.all(promises);
     }
 
-    public onStatusChanged(handler: (readiness: number) => void) {
+    public onStatusChanged(handler: (statuses: FrameStatus[]) => void) {
         this._statusChangedHandler = handler;
     }
 
     private _newExecutorStatus(executor: DappletFrameExecutor, status: FrameStatus) {
-        this._statusChangedHandler(1);
+        const statuses = this._frameExecutors.map(ex => ex.status)
+        this._statusChangedHandler(statuses);
     }
 }

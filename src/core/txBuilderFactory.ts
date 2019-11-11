@@ -1,5 +1,5 @@
-// import { TxTemplate } from 'src/types/txTemplate';
-// import { TxBuilder } from 'src/interfaces/txBuilder';
+// import { TxTemplate } from '../types/txTemplate';
+// import { TxBuilder } from '../interfaces/txBuilder';
 // import { FeaturesRegistry } from './featuresRegistry';
 
 // export class TxBuilderFactory {

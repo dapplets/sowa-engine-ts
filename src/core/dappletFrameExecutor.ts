@@ -6,15 +6,15 @@ import { DappletProvider } from "../interfaces/dappletProvider";
 //import { TxBuilderFactory } from './txBuilderFactory';
 import { FeaturesRegistry } from './featuresRegistry';
 import { IncompatibleDappletError } from '../errors/incompatibleDappletError';
-import { View } from 'src/interfaces/view';
+import { View } from '../interfaces/view';
 
 export class DappletFrameExecutor {
     private _state: State;
     //private _txBuilderFactory: TxBuilderFactory;
-    protected dappletId: string;
-    protected dapplet?: DappletTemplate;
+    public dappletId: string;
+    public dapplet?: DappletTemplate;
     private _statusChangedHandler?: (status: FrameStatus) => void;
-    protected status: FrameStatus = FrameStatus.INITED;
+    public status: FrameStatus = FrameStatus.INITED;
     private _txBuilders: { [key: string]: TxBuilder } = {};
     private _features: { [alias: string]: any } = {};
     private _compatibleView?: View;
@@ -46,10 +46,14 @@ export class DappletFrameExecutor {
 
         // validate and init views
         let isCompatibleViewFound = false;
+        // ToDo: think about whose view is priority (wallet developer vs dapplet developer)
         for (const viewTemplate of dapplet.views) {
             const regKeys = dapplet.aliases[viewTemplate.type];
             if (!regKeys) throw new Error(`Alias ${viewTemplate.type} is not defined in usings.`);
             const viewClass = this._featuresRegistry.get(...regKeys);
+
+            // ToDo: validate formatters
+
             if (!viewClass) continue;
 
             this._compatibleView = new viewClass(viewTemplate, this._state);

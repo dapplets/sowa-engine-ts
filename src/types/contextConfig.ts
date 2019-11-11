@@ -1,5 +1,5 @@
-import { FeaturesRegistry } from 'src/core/featuresRegistry';
-import { DappletProvider } from 'src/interfaces/dappletProvider';
+import { FeaturesRegistry } from '../core/featuresRegistry';
+import { DappletProvider } from '../interfaces/dappletProvider';
 
 export type ContextConfig = {
     provider?: DappletProvider;
