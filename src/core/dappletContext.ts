@@ -1,10 +1,11 @@
-import { DappletProvider } from "../../interfaces/dappletProvider";
-import { DappletRequest } from "../../types/dappletRequest";
+import { DappletProvider } from "../interfaces/dappletProvider";
+import { DappletRequest } from "../types/dappletRequest";
 import { DappletEngine } from "./dappletEngine";
-import { DappletActivity } from "../views/dappletActivity";
+import { DappletActivity } from "./dappletActivity";
 import { ContextConfig } from 'src/types/contextConfig';
-import { DEFAULT_CONFIG } from "../../defaultConfig";
-import { FeaturesRegistry } from '../featuresRegistry';
+import { DEFAULT_CONFIG } from "../defaultConfig";
+import { FeaturesRegistry } from './featuresRegistry';
+import { DappletTxResult } from '../interfaces/dappletTxResult';
 
 // создается в момент старта кошелька и singleton
 // к нему приходят request'ы
@@ -24,12 +25,13 @@ export class DappletContext {
 
     //typeSupport: Map<PID,(rawData:string,type:PID)=>typedValue> = new Map
 
-    async processRequest(request: DappletRequest) {
+    async processRequest(request: DappletRequest): Promise<DappletTxResult> {
         const engine = new DappletEngine(request, this._featuresRegistry);
         await engine.load(this._dappletProvider);
-        if (!engine.validate()) throw new Error("Invalid dapplet");
-
-        const activity = new DappletActivity(request, this);
+        engine.validate();
+        
+        //const activity = new DappletActivity(request, this);
+        return {};
     }
 
     async loadResource(id: string): Promise<ArrayBuffer> {

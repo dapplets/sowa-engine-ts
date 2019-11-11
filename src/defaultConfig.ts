@@ -1,11 +1,14 @@
 import { ContextConfig } from "./types/contextConfig";
-import { FeaturesRegistry } from "./impl/featuresRegistry";
-import { EthTxBuilder } from "./impl/txBuilders/ethTxBuilder";
-import { GithubDappletProvider } from './impl/providers/githubDappletProvider';
+import { FeaturesRegistry } from "./core/featuresRegistry";
+import { EthTxBuilder } from "./extensions/txBuilders/ethTxBuilder";
+import { GithubDappletProvider } from './providers/githubDappletProvider';
+import { CameraFormatter } from './extensions/formatters/cameraFormatter';
+import { EthAddressHtmlFormatter } from './extensions/formatters/ethAddressHtmlFormatter';
+import { PlainMustacheView } from './extensions/views/plainMustacheView';
 
 const DEFAULT_CONFIG: ContextConfig = {
     provider: new GithubDappletProvider(),
-    features: new FeaturesRegistry([EthTxBuilder])
+    features: new FeaturesRegistry(EthTxBuilder, CameraFormatter, EthAddressHtmlFormatter, PlainMustacheView)
 };
 
 export { DEFAULT_CONFIG }

@@ -1,3 +1,3 @@
-import { DappletContext } from "./impl/core/dappletContext";
+import { DappletContext } from "./core/dappletContext";
 
 export { DappletContext };
