@@ -1,5 +1,3 @@
-import { Feature } from './feature';
-
-export interface Formatter extends Feature { // ToDo: придумать другое имя
+export interface Formatter { // ToDo: Think about how to rename it
     exec(input: any): any;
 }

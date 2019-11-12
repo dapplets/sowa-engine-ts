@@ -8,9 +8,10 @@ import { FeatureRegistry } from './featureRegistry';
 import { DappletTxResult } from '../interfaces/dappletTxResult';
 import { FrameStatus } from '../types/statusEnum';
 
-// создается в момент старта кошелька и singleton
-// к нему приходят request'ы
-// он создает dappletEngines и запускает их
+// DappletContext (DC) is created in the moment of a wallet starting.
+// DC is Singleton class.
+// DC catches dapplet requests.
+// DC creates dappletEngines and runs them.
 // package: wallet
 // instantated once on Wallet start
 export class DappletContext {

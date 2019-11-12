@@ -16,8 +16,8 @@ export class DappletEngine {
         }
     }
 
-    // // вызывается при изменении Storage/State
-    // // в момент когда приходят события от TxBuilder
+    // // It's called when Storage/State is changing.
+    // // in the moment of receiving events from TxBuilder
     // private _scheduleNextRun() {
 
     // }
