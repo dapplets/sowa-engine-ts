@@ -7,7 +7,7 @@ import { EthAddressHtmlFormatter } from './extensions/formatters/ethAddressHtmlF
 import { PlainMustacheView } from './extensions/views/plainMustacheView';
 
 const DEFAULT_CONFIG: ContextConfig = {
-    provider: new GithubDappletProvider(),
+    providers: [new GithubDappletProvider()],
     features: new FeaturesRegistry(EthTxBuilder, CameraFormatter, EthAddressHtmlFormatter, PlainMustacheView)
 };
 

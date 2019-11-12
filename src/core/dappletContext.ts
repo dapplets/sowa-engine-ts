@@ -14,12 +14,12 @@ import { FrameStatus } from '../types/statusEnum';
 // package: wallet
 // instantated once on Wallet start
 export class DappletContext {
-    private _dappletProvider: DappletProvider;
+    private _dappletProviders: DappletProvider[];
     private _featuresRegistry: FeaturesRegistry;
 
     constructor(config: ContextConfig = DEFAULT_CONFIG) {
         config = { ...DEFAULT_CONFIG, ...config };
-        this._dappletProvider = config.provider!;
+        this._dappletProviders = config.providers!;
         this._featuresRegistry = config.features!;
     }
 
@@ -28,7 +28,7 @@ export class DappletContext {
     async processRequest(request: DappletRequest): Promise<DappletTxResult> {
         const engine = new DappletEngine(request, this._featuresRegistry);
         engine.onStatusChanged((statuses) => console.log(statuses.map(s => FrameStatus[s]).join(", ")));
-        await engine.load(this._dappletProvider);
+        await engine.load(this._dappletProviders);
         engine.validate();
         
         //const activity = new DappletActivity(request, this);

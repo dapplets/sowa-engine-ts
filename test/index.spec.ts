@@ -20,8 +20,8 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
       }]
     }
 
-    const dappletContext = new DappletContext({ 
-      provider: new TestDappletProvider()
+    const dappletContext = new DappletContext({
+      providers: [new TestDappletProvider()]
     });
     const result = await dappletContext.processRequest(DAPPLET_REQUEST);
 

@@ -33,13 +33,26 @@ export class DappletFrameExecutor {
         this._setStatus(FrameStatus.INITED);
     }
 
-    public async load(dappletProvider: DappletProvider): Promise<void> {
-        this.dapplet = await dappletProvider.loadDapplet(this.dappletId);
-        this._setStatus(FrameStatus.LOADED);
+    public async load(dappletProviders: DappletProvider[]): Promise<void> {
+        for (let i = 0; i < dappletProviders.length; i++) {
+            try {
+                const dapplet = await dappletProviders[i].loadDapplet(this.dappletId);
+                if (!dapplet) throw new Error("Empty response from DappletProvider.");
+                this.dapplet = dapplet;
+                this._setStatus(FrameStatus.LOADED);
+                return;
+            } catch (err) {
+                if (i === dappletProviders.length - 1) {
+                    throw Error(`All configured providers don't contain the dapplet ${this.dappletId}.`);
+                }
+            }
+        }
     }
 
     public validate() {
-        if (this.status < FrameStatus.LOADED) throw Error("Dapplet template is not loaded yet. Call load() method before.");
+        if (this.status < FrameStatus.LOADED) {
+            throw Error("Dapplet template is not loaded yet. Call load() method before.");
+        }
 
         const dapplet = this.dapplet!;
         const incompatibleFeatures: string[][] = [];

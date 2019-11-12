@@ -22,8 +22,8 @@ export class DappletEngine {
 
     // }
 
-    public async load(dappletProvider: DappletProvider): Promise<void> {
-        const promises = this._frameExecutors.map(f => f.load(dappletProvider));
+    public async load(dappletProviders: DappletProvider[]): Promise<void> {
+        const promises = this._frameExecutors.map(f => f.load(dappletProviders));
         await Promise.all(promises);
     }
 
