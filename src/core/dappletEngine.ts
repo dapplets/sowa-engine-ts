@@ -3,14 +3,15 @@ import { DappletRequest } from "../types/dappletRequest";
 import { DappletProvider } from "../interfaces/dappletProvider";
 import { FrameStatus } from "../types/statusEnum";
 import { FeatureRegistry } from './featureRegistry';
+import { DappletContext } from './dappletContext';
 
 export class DappletEngine {
     private _frameExecutors: DappletFrameExecutor[] = [];
     private _statusChangedHandler: (statuses: FrameStatus[]) => void = () => {};
 
-    constructor(dappletRequest: DappletRequest, featureRegistry: FeatureRegistry) {
+    constructor(dappletRequest: DappletRequest, private _context: DappletContext) {
         for (const frame of dappletRequest.frames) {
-            const executor = new DappletFrameExecutor(frame.dappletId, frame.txMeta, featureRegistry);
+            const executor = new DappletFrameExecutor(frame.dappletId, frame.txMeta, this._context.featureRegistry);
             executor.onStatusChanged((s) => this._newExecutorStatus(executor, s));
             this._frameExecutors.push(executor);
         }
@@ -22,8 +23,8 @@ export class DappletEngine {
 
     // }
 
-    public async load(dappletProviders: DappletProvider[]): Promise<void> {
-        const promises = this._frameExecutors.map(f => f.load(dappletProviders));
+    public async load(): Promise<void> {
+        const promises = this._frameExecutors.map(f => f.load(this._context.dappletProviders));
         await Promise.all(promises);
     }
 

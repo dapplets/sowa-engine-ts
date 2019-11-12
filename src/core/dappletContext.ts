@@ -15,21 +15,19 @@ import { FrameStatus } from '../types/statusEnum';
 // package: wallet
 // instantated once on Wallet start
 export class DappletContext {
-    private _dappletProviders: DappletProvider[];
-    private _featureRegistry: FeatureRegistry;
+    public dappletProviders: DappletProvider[];
+    public featureRegistry: FeatureRegistry;
 
     constructor(config: ContextConfig = DEFAULT_CONFIG) {
         config = { ...DEFAULT_CONFIG, ...config };
-        this._dappletProviders = config.providers!;
-        this._featureRegistry = new FeatureRegistry(config.features || []);
+        this.dappletProviders = config.providers!;
+        this.featureRegistry = new FeatureRegistry(config.features || []);
     }
 
-    //typeSupport: Map<PID,(rawData:string,type:PID)=>typedValue> = new Map
-
     async processRequest(request: DappletRequest): Promise<DappletTxResult> {
-        const engine = new DappletEngine(request, this._featureRegistry);
+        const engine = new DappletEngine(request, this);
         engine.onStatusChanged((statuses) => console.log(statuses.map(s => FrameStatus[s]).join(", ")));
-        await engine.load(this._dappletProviders);
+        await engine.load();
         engine.validate();
         
         //const activity = new DappletActivity(request, this);
@@ -39,23 +37,4 @@ export class DappletContext {
     async loadResource(id: string): Promise<ArrayBuffer> {
         throw new Error("NOT IMPLEMENTED");
     }
-
-    // createParser(parserPid: any, config: DappletConfig): IRequestDataParser {
-    //     throw new Error("Method not implemented.");
-    // }
-
-    // createTxEngine(config: TransactionSection): TxEngine {
-    //     for (const name in config) {
-    //         let txConfig = config[name];
-    //         switch (txConfig.type) {
-    //             case EthereumSupport.PID:
-    //                 return new EthereumSupport(txConfig)
-    //             case TableMustasheView.PID:
-    //                 return new IPFSSupport(txConfig)
-    //             default:
-    //                 break;
-    //         }
-    //     }
-    //     throw new Error("Incompatible view")
-    // }
 }
