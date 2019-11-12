@@ -1,14 +1,12 @@
-import { Type } from '../types/type';
-
 export class FeatureRegistry {
 
-    private _storage = new Map<string, Type<any>>();
+    private _storage = new Map<string, any>();
 
-    constructor(features: Type<any>[]) {
+    constructor(features: any[]) {
         this.put(features);
     }
 
-    public put(features: Type<any>[]) {
+    public put(features: any[]) {
         for (const f of features) {
             const regKeys: string[] = f["REG_KEYS"];
             if (!regKeys) throw new Error("Invalid feature class. The feature doesn't contain REG_KEYS property.");

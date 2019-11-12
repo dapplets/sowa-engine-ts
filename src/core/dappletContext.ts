@@ -20,7 +20,7 @@ export class DappletContext {
     constructor(config: ContextConfig = DEFAULT_CONFIG) {
         config = { ...DEFAULT_CONFIG, ...config };
         this._dappletProviders = config.providers!;
-        this._featureRegistry = new FeatureRegistry(config.features);
+        this._featureRegistry = new FeatureRegistry(config.features || []);
     }
 
     //typeSupport: Map<PID,(rawData:string,type:PID)=>typedValue> = new Map
