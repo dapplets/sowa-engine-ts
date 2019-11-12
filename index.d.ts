@@ -1,0 +1,1 @@
+declare module '@dapplets/dapplet-engine-ts'
