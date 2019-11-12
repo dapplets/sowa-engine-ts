@@ -63,7 +63,7 @@ export class DappletFrameExecutor {
         for (const viewTemplate of dapplet.views) {
             const regKeys = dapplet.aliases[viewTemplate.type];
             if (!regKeys) throw new Error(`Alias ${viewTemplate.type} is not defined in usings.`);
-            const viewClass = this._featureRegistry.get(...regKeys);
+            const viewClass = this._featureRegistry.get(regKeys);
 
             // ToDo: validate formatters
 
@@ -78,7 +78,7 @@ export class DappletFrameExecutor {
         for (const txName in dapplet.transactions) {
             const txAlias = dapplet.transactions[txName].type;
             const regKeys = dapplet.aliases[txAlias];
-            const txBuilderClass = this._featureRegistry.get(...regKeys);
+            const txBuilderClass = this._featureRegistry.get(regKeys);
             if (!txBuilderClass) {
                 incompatibleFeatures.push(regKeys);
             }
@@ -101,7 +101,7 @@ export class DappletFrameExecutor {
         for (const txName in dapplet.transactions) {
             const txTemplate = dapplet.transactions[txName];
             const regKeys = dapplet.aliases[txTemplate.type];
-            const txBuilderClass = this._featureRegistry.get(...regKeys);
+            const txBuilderClass = this._featureRegistry.get(regKeys);
             if (!txBuilderClass) throw new Error("TxBuilderClass is not found");
             const builder = new txBuilderClass(txTemplate, this._state);
             this._txBuilders[txName] = builder;

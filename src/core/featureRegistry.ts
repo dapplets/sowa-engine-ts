@@ -4,26 +4,24 @@ export class FeatureRegistry {
 
     private _storage = new Map<string, Type<any>>();
 
-    constructor(...features: Type<any>[]) {
-        this.put(...features);
+    constructor(features: Type<any>[]) {
+        this.put(features);
     }
 
-    public put(...features: Type<any>[]) {
+    public put(features: Type<any>[]) {
         for (const f of features) {
             const regKeys: string[] = f["REG_KEYS"];
             if (!regKeys) throw new Error("Invalid feature class. The feature doesn't contain REG_KEYS property.");
             const key = regKeys.join("|");
             this._storage.set(key, f);
         }
-
     }
 
-    public get(...regKeys: string[]) {
+    public get(regKeys: string[]) {
         const key = regKeys.join("|");
         const featureClass = this._storage.get(key);
         return featureClass;
     }
-
 }
 
 // let dappletTemplate
