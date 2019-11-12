@@ -4,7 +4,7 @@ import { FrameStatus } from "../types/statusEnum";
 import { TxBuilder } from "../interfaces/txBuilder";
 import { DappletProvider } from "../interfaces/dappletProvider";
 //import { TxBuilderFactory } from './txBuilderFactory';
-import { FeaturesRegistry } from './featuresRegistry';
+import { FeatureRegistry } from './featureRegistry';
 import { IncompatibleDappletError } from '../errors/incompatibleDappletError';
 import { View } from '../interfaces/view';
 
@@ -26,10 +26,10 @@ export class DappletFrameExecutor {
         }
     }
 
-    constructor(dappletId: string, txMeta: any, private _featuresRegistry: FeaturesRegistry) {
+    constructor(dappletId: string, txMeta: any, private _featureRegistry: FeatureRegistry) {
         this.dappletId = dappletId;
         this._state = new State(txMeta);
-        //this._txBuilderFactory = new TxBuilderFactory(_featuresRegistry);
+        //this._txBuilderFactory = new TxBuilderFactory(_featureRegistry);
         this._setStatus(FrameStatus.INITED);
     }
 
@@ -63,7 +63,7 @@ export class DappletFrameExecutor {
         for (const viewTemplate of dapplet.views) {
             const regKeys = dapplet.aliases[viewTemplate.type];
             if (!regKeys) throw new Error(`Alias ${viewTemplate.type} is not defined in usings.`);
-            const viewClass = this._featuresRegistry.get(...regKeys);
+            const viewClass = this._featureRegistry.get(...regKeys);
 
             // ToDo: validate formatters
 
@@ -78,7 +78,7 @@ export class DappletFrameExecutor {
         for (const txName in dapplet.transactions) {
             const txAlias = dapplet.transactions[txName].type;
             const regKeys = dapplet.aliases[txAlias];
-            const txBuilderClass = this._featuresRegistry.get(...regKeys);
+            const txBuilderClass = this._featureRegistry.get(...regKeys);
             if (!txBuilderClass) {
                 incompatibleFeatures.push(regKeys);
             }
@@ -101,7 +101,7 @@ export class DappletFrameExecutor {
         for (const txName in dapplet.transactions) {
             const txTemplate = dapplet.transactions[txName];
             const regKeys = dapplet.aliases[txTemplate.type];
-            const txBuilderClass = this._featuresRegistry.get(...regKeys);
+            const txBuilderClass = this._featureRegistry.get(...regKeys);
             if (!txBuilderClass) throw new Error("TxBuilderClass is not found");
             const builder = new txBuilderClass(txTemplate, this._state);
             this._txBuilders[txName] = builder;

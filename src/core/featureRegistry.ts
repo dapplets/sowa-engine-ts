@@ -1,6 +1,6 @@
 import { Type } from '../types/type';
 
-export class FeaturesRegistry {
+export class FeatureRegistry {
 
     private _storage = new Map<string, Type<any>>();
 
@@ -27,7 +27,7 @@ export class FeaturesRegistry {
 }
 
 // let dappletTemplate
-// let registry: FeaturesRegistry = new FeaturesRegistry();
+// let registry: FeatureRegistry = new FeatureRegistry();
 // let module = registry.get([ETHEREUM_SUPPORT_FORMATTER_URI, HTML_MUSTASHE_VIEW]);
 
 // // == inside DappletEngine view evaluation================

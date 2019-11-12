@@ -2,15 +2,15 @@ import { DappletFrameExecutor } from "./dappletFrameExecutor";
 import { DappletRequest } from "../types/dappletRequest";
 import { DappletProvider } from "../interfaces/dappletProvider";
 import { FrameStatus } from "../types/statusEnum";
-import { FeaturesRegistry } from './featuresRegistry';
+import { FeatureRegistry } from './featureRegistry';
 
 export class DappletEngine {
     private _frameExecutors: DappletFrameExecutor[] = [];
     private _statusChangedHandler: (statuses: FrameStatus[]) => void = () => {};
 
-    constructor(dappletRequest: DappletRequest, featuresRegistry: FeaturesRegistry) {
+    constructor(dappletRequest: DappletRequest, featureRegistry: FeatureRegistry) {
         for (const frame of dappletRequest.frames) {
-            const executor = new DappletFrameExecutor(frame.dappletId, frame.txMeta, featuresRegistry);
+            const executor = new DappletFrameExecutor(frame.dappletId, frame.txMeta, featureRegistry);
             executor.onStatusChanged((s) => this._newExecutorStatus(executor, s));
             this._frameExecutors.push(executor);
         }

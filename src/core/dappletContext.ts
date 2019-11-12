@@ -4,7 +4,7 @@ import { DappletEngine } from "./dappletEngine";
 import { DappletActivity } from "./dappletActivity";
 import { ContextConfig } from '../types/contextConfig';
 import { DEFAULT_CONFIG } from "../defaultConfig";
-import { FeaturesRegistry } from './featuresRegistry';
+import { FeatureRegistry } from './featureRegistry';
 import { DappletTxResult } from '../interfaces/dappletTxResult';
 import { FrameStatus } from '../types/statusEnum';
 
@@ -15,18 +15,18 @@ import { FrameStatus } from '../types/statusEnum';
 // instantated once on Wallet start
 export class DappletContext {
     private _dappletProviders: DappletProvider[];
-    private _featuresRegistry: FeaturesRegistry;
+    private _featureRegistry: FeatureRegistry;
 
     constructor(config: ContextConfig = DEFAULT_CONFIG) {
         config = { ...DEFAULT_CONFIG, ...config };
         this._dappletProviders = config.providers!;
-        this._featuresRegistry = config.features!;
+        this._featureRegistry = config.features!;
     }
 
     //typeSupport: Map<PID,(rawData:string,type:PID)=>typedValue> = new Map
 
     async processRequest(request: DappletRequest): Promise<DappletTxResult> {
-        const engine = new DappletEngine(request, this._featuresRegistry);
+        const engine = new DappletEngine(request, this._featureRegistry);
         engine.onStatusChanged((statuses) => console.log(statuses.map(s => FrameStatus[s]).join(", ")));
         await engine.load(this._dappletProviders);
         engine.validate();
