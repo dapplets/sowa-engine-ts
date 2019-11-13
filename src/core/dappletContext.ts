@@ -1,13 +1,12 @@
 import { DappletProvider } from "../interfaces/dappletProvider";
 import { DappletRequest } from "../types/dappletRequest";
-import { DappletEngine } from "./dappletEngine";
-import { DappletActivity } from "./dappletActivity";
 import { ContextConfig } from '../types/contextConfig';
 import { DEFAULT_CONFIG } from "../defaultConfig";
 import { FeatureRegistry } from './featureRegistry';
 import { DappletTxResult } from '../interfaces/dappletTxResult';
 import { DappletTemplate } from '../types/dappletTemplate';
 import { IncompatibleDappletError } from '../errors/incompatibleDappletError';
+import { DappletFrameExecutor } from './dappletFrameExecutor';
 
 // DappletContext (DC) is created in the moment of a wallet starting.
 // DC is Singleton class.
@@ -33,8 +32,12 @@ export class DappletContext {
             request.frames[i].dapplet = dapplet;
         }
 
-        const engine = new DappletEngine(request, this);
-        engine.run();
+        // running
+        for (const frame of request.frames) {
+            if (!frame.dapplet) throw Error("Dapplet is not loaded.");
+            const executor = new DappletFrameExecutor(frame.dapplet, frame.txMeta, this.featureRegistry);
+            executor.run();
+        }
 
         //const activity = new DappletActivity(request, this);
         return {};
