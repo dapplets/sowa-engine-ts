@@ -4,7 +4,7 @@ import { TxBuilder } from "../interfaces/txBuilder";
 import { FeatureRegistry } from './featureRegistry';
 import { View } from '../interfaces/view';
 
-export class DappletFrameExecutor {
+export class DappletEngine {
     private _state: State;
     private _txBuilders: { [key: string]: TxBuilder } = {};
     private _features: { [alias: string]: any } = {};
