@@ -8,8 +8,8 @@ export class FeatureRegistry {
 
     public put(features: any[]) {
         for (const f of features) {
-            const regKeys: string[] = f["REG_KEYS"];
-            if (!regKeys) throw new Error("Invalid feature class. The feature doesn't contain REG_KEYS property.");
+            const regKeys: string[] = f["REG_KEY"];
+            if (!regKeys) throw new Error("Invalid feature class. The feature doesn't contain REG_KEY property.");
             const key = regKeys.join("|");
             this._storage.set(key, f);
         }

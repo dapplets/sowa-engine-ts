@@ -3,7 +3,7 @@
 export class CameraFormatter {
     public static readonly globalName: string = "http://types.dapplets.org/ethereum/formatters/address/1.0";
     public static readonly targetViewGlobalName: string = "http://types.dapplets.org/views/htmlMustache/1.0";
-    public static readonly REG_KEYS = [CameraFormatter.globalName, CameraFormatter.targetViewGlobalName];
+    public static readonly REG_KEY = [CameraFormatter.globalName, CameraFormatter.targetViewGlobalName];
 
     public txConfig: any;
 

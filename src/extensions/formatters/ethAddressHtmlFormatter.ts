@@ -1,7 +1,7 @@
 export class EthAddressHtmlFormatter {
     public static readonly globalName: string = "http://types.dapplets.org/ethereum/formatters/address/1.0";
     public static readonly targetViewGlobalName: string = "http://types.dapplets.org/views/htmlMustache/1.0";
-    public static readonly REG_KEYS = [EthAddressHtmlFormatter.globalName, EthAddressHtmlFormatter.targetViewGlobalName];
+    public static readonly REG_KEY = [EthAddressHtmlFormatter.globalName, EthAddressHtmlFormatter.targetViewGlobalName];
 
     public txConfig: any;
 
