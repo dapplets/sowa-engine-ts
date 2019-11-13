@@ -6,7 +6,7 @@ import { FeatureRegistry } from './featureRegistry';
 import { DappletTxResult } from '../interfaces/dappletTxResult';
 import { DappletTemplate } from '../types/dappletTemplate';
 import { IncompatibleDappletError } from '../errors/incompatibleDappletError';
-import { DappletFrameExecutor } from './dappletFrameExecutor';
+import { DappletEngine } from './dappletFrameExecutor';
 
 // DappletContext (DC) is created in the moment of a wallet starting.
 // DC is Singleton class.
@@ -35,7 +35,7 @@ export class DappletContext {
         // running
         for (const frame of request.frames) {
             if (!frame.dapplet) throw Error("Dapplet is not loaded.");
-            const executor = new DappletFrameExecutor(frame.dapplet, frame.txMeta, this.featureRegistry);
+            const executor = new DappletEngine(frame.dapplet, frame.txMeta, this.featureRegistry);
             executor.run();
         }
 
