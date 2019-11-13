@@ -10,10 +10,7 @@ import { DappletEngine } from './dappletFrameExecutor';
 
 // DappletContext (DC) is created in the moment of a wallet starting.
 // DC is Singleton class.
-// DC catches dapplet requests.
-// DC creates dappletEngines and runs them.
-// package: wallet
-// instantated once on Wallet start
+// DC loads and verifies DappletTemplates and other resources referenced in Frames. And rejects the Request if any errors.
 export class DappletContext {
     public dappletProviders: DappletProvider[];
     public featureRegistry: FeatureRegistry;
