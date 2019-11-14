@@ -1,13 +1,12 @@
 import { DappletFrameExecutor } from "./dappletFrameExecutor";
-import { DappletRequest } from "../types/dappletRequest";
 import { DappletContext } from './dappletContext';
+import { LoadedDappletFrame } from 'src/types/loadedDappletFrame';
 
 export class DappletEngine {
     private _frameExecutors: DappletFrameExecutor[] = [];
 
-    constructor(dappletRequest: DappletRequest, private _context: DappletContext) {
-        for (const frame of dappletRequest.frames) {
-            if (!frame.dapplet) throw Error("Dapplet is not loaded.");
+    constructor(dappletFrames: LoadedDappletFrame[], private _context: DappletContext) {
+        for (const frame of dappletFrames) {
             const executor = new DappletFrameExecutor(frame.dapplet, frame.txMeta, this._context.featureRegistry);
             this._frameExecutors.push(executor);
         }

@@ -24,13 +24,18 @@ export class DappletContext {
 
     async processRequest(request: DappletRequest): Promise<DappletTxResult> {
         // dapplet loading and validation
-        for (let i = 0; i < request.frames.length; i++) {
-            const dapplet = await this._loadDapplet(request.frames[i].dappletId);
-            this._validateDapplet(dapplet);
-            request.frames[i].dapplet = dapplet;
-        }
+        const frames = await Promise.all(
+            request.frames.map(f =>
+                this._loadDapplet(f.dappletId)
+                    .then(d => ({
+                        dappletId: f.dappletId,
+                        dapplet: d,
+                        txMeta: f.txMeta
+                    }))
+            )
+        );
 
-        const engine = new DappletEngine(request, this);
+        const engine = new DappletEngine(frames, this);
         engine.run();
 
         //const activity = new DappletActivity(request, this);
