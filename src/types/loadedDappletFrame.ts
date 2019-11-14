@@ -1,7 +1,7 @@
-import { DappletTemplate } from './dappletTemplate';
+import { DappletRuntime } from './dappletRuntime';
 
-export type LoadedDappletFrame = {
+export type DappletFrameRuntime = {
     dappletId: string;
-    dapplet: DappletTemplate;
+    dapplet: DappletRuntime;
     txMeta: any;
 }
