@@ -46,8 +46,7 @@ export class DappletContext {
         for (const provider of this.dappletProviders) {
             try {
                 const dapplet = await provider.loadDapplet(dappletId);
-                if (!dapplet) continue;
-                return dapplet;
+                if (dapplet) return dapplet;
             } catch (err) { }
         }
         throw Error(`All configured providers don't contain the dapplet ${dappletId}.`);
