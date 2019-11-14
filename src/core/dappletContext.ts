@@ -8,6 +8,9 @@ import { FeatureRegistry } from './featureRegistry';
 import { DappletTxResult } from '../interfaces/dappletTxResult';
 import { DappletTemplate } from '../types/dappletTemplate';
 import { IncompatibleDappletError } from '../errors/incompatibleDappletError';
+import { toDappletRuntime } from './helpers';
+import { DappletRuntime } from 'src/types/dappletRuntime';
+import { RegKey } from './regKey';
 
 // DappletContext (DC) is created in the moment of a wallet starting.
 // DC is Singleton class.
@@ -27,11 +30,15 @@ export class DappletContext {
         const frames = await Promise.all(
             request.frames.map(f =>
                 this._loadDapplet(f.dappletId)
-                    .then(d => ({
-                        dappletId: f.dappletId,
-                        dapplet: d,
-                        txMeta: f.txMeta
-                    }))
+                    .then(d => {
+                        const dappletRuntime = toDappletRuntime(d);
+                        this._validateDapplet(dappletRuntime);
+                        return {
+                            dappletId: f.dappletId,
+                            dapplet: dappletRuntime,
+                            txMeta: f.txMeta
+                        }
+                    })
             )
         );
 
@@ -52,16 +59,16 @@ export class DappletContext {
         throw Error(`All configured providers don't contain the dapplet ${dappletId}.`);
     }
 
-    private _validateDapplet(dapplet: DappletTemplate) {
-        const incompatibleFeatures: string[][] = [];
+    private _validateDapplet(dapplet: DappletRuntime) {
+        const incompatibleFeatures: RegKey[] = [];
 
         // validate and init views
         let isCompatibleViewFound = false;
         // ToDo: think about whose view is priority (wallet developer vs dapplet developer)
         for (const viewTemplate of dapplet.views) {
-            const regKeys = dapplet.aliases[viewTemplate.type];
-            if (!regKeys) throw new Error(`Alias ${viewTemplate.type} is not defined in usings.`);
-            const viewClass = this.featureRegistry.get(regKeys);
+            const regKey = dapplet.aliases.get(viewTemplate.type);
+            if (!regKey) throw new Error(`Alias ${viewTemplate.type} is not defined in usings.`);
+            const viewClass = this.featureRegistry.get(regKey);
 
             // ToDo: validate formatters
 
@@ -74,13 +81,14 @@ export class DappletContext {
         // validate and init txBuilders
         for (const txName in dapplet.transactions) {
             const txAlias = dapplet.transactions[txName].type;
-            const regKeys = dapplet.aliases[txAlias];
-            const txBuilderClass = this.featureRegistry.get(regKeys);
+            const regKey = dapplet.aliases.get(txAlias);
+            if (!regKey) throw new Error(`Alias ${txAlias} is not defined in usings.`);
+            const txBuilderClass = this.featureRegistry.get(regKey);
             if (!txBuilderClass) {
-                incompatibleFeatures.push(regKeys);
+                incompatibleFeatures.push(regKey);
             }
         }
-
+        
         if (incompatibleFeatures.length > 0 || !isCompatibleViewFound) {
             throw new IncompatibleDappletError(incompatibleFeatures);
         }
