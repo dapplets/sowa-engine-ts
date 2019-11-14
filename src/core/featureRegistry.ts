@@ -17,7 +17,11 @@ export class FeatureRegistry {
         }
     }
 
-    public get(regKey: RegKey) {
+    public getByKey(regKey: RegKey) {
         return this._storage.get(regKey.toString());
+    }
+
+    public getByName(name: string) {
+        return this._storage.get(name);
     }
 }

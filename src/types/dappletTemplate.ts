@@ -4,7 +4,7 @@ import { ViewTemplate } from './viewTemplate';
 export type DappletTemplate = {
     // contexts/registries/usings/aliases
     aliases: {
-        [key: string]: string[]
+        [key: string]: string
     };
 
     // // rel 2.0?

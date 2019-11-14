@@ -60,15 +60,15 @@ export class DappletContext {
     }
 
     private _validateAndPrepareDapplet(dapplet: DappletRuntime) {
-        const incompatibleFeatures: RegKey[] = [];
+        const incompatibleFeatures: string[] = [];
 
         // validate and init views
         let isCompatibleViewFound = false;
         // ToDo: think about whose view is priority (wallet developer vs dapplet developer)
         for (const viewTemplate of dapplet.views) {
-            const regKey = dapplet.aliases.get(viewTemplate.type);
-            if (!regKey) throw new Error(`Alias ${viewTemplate.type} is not defined in usings.`);
-            const viewClass = this.featureRegistry.get(regKey);
+            const viewGlobalName = dapplet.aliases.get(viewTemplate.type);
+            if (!viewGlobalName) throw new Error(`Alias for ${viewTemplate.type} is not defined in usings.`);
+            const viewClass = this.featureRegistry.getByName(viewGlobalName);
             if (!viewClass) continue;
 
             // ToDo: validate formatters
@@ -81,11 +81,11 @@ export class DappletContext {
         // validate and init txBuilders
         for (const txName in dapplet.transactions) {
             const txAlias = dapplet.transactions[txName].type;
-            const regKey = dapplet.aliases.get(txAlias);
-            if (!regKey) throw new Error(`Alias ${txAlias} is not defined in usings.`);
-            const txBuilderClass = this.featureRegistry.get(regKey);
+            const txBuilderGlobalName = dapplet.aliases.get(txAlias);
+            if (!txBuilderGlobalName) throw new Error(`Alias for ${txAlias} is not defined in usings.`);
+            const txBuilderClass = this.featureRegistry.getByName(txBuilderGlobalName);
             if (!txBuilderClass) {
-                incompatibleFeatures.push(regKey);
+                incompatibleFeatures.push(txBuilderGlobalName);
             } else {
                 dapplet.compatibleViewClasses.push(txBuilderClass);
             }
