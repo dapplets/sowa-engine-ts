@@ -32,7 +32,7 @@ export class DappletContext {
                 this._loadDapplet(f.dappletId)
                     .then(d => {
                         const dappletRuntime = toDappletRuntime(d);
-                        this._validateDapplet(dappletRuntime);
+                        this._validateAndPrepareDapplet(dappletRuntime);
                         return {
                             dappletId: f.dappletId,
                             dapplet: dappletRuntime,
@@ -59,7 +59,7 @@ export class DappletContext {
         throw Error(`All configured providers don't contain the dapplet ${dappletId}.`);
     }
 
-    private _validateDapplet(dapplet: DappletRuntime) {
+    private _validateAndPrepareDapplet(dapplet: DappletRuntime) {
         const incompatibleFeatures: RegKey[] = [];
 
         // validate and init views
@@ -69,10 +69,10 @@ export class DappletContext {
             const regKey = dapplet.aliases.get(viewTemplate.type);
             if (!regKey) throw new Error(`Alias ${viewTemplate.type} is not defined in usings.`);
             const viewClass = this.featureRegistry.get(regKey);
+            if (!viewClass) continue;
 
             // ToDo: validate formatters
-
-            if (!viewClass) continue;
+            dapplet.compatibleViewClasses.push(viewClass);
 
             isCompatibleViewFound = true;
             break;
@@ -86,6 +86,8 @@ export class DappletContext {
             const txBuilderClass = this.featureRegistry.get(regKey);
             if (!txBuilderClass) {
                 incompatibleFeatures.push(regKey);
+            } else {
+                dapplet.compatibleViewClasses.push(txBuilderClass);
             }
         }
         

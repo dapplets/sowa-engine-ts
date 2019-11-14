@@ -5,7 +5,7 @@ import { DappletTemplate } from '../types/dappletTemplate';
 function _replaceSubaliases(value: string, aliasMap: { [alias: string]: string[] | string }): string {
     const subaliases = value.match(/@[a-zA-Z_$][0-9a-zA-Z_$]*/gm);
     if (!subaliases) return value;
-    
+
     for (const subaliase of subaliases) {
         const subAliasValue = aliasMap[subaliase];
         if (!subAliasValue) throw Error(`Alias ${subaliase} is not found.`);
@@ -21,7 +21,7 @@ export function resolveAliasMap(aliasMap: { [alias: string]: string[] | string }
 
     for (const alias in aliasMap) {
         if (alias[0] === "@") continue;
-        
+
         const values = aliasMap[alias];
 
         if (values instanceof Array) {
@@ -38,6 +38,8 @@ export function toDappletRuntime(raw: DappletTemplate): DappletRuntime {
     return {
         aliases: resolveAliasMap(raw.aliases),
         transactions: raw.transactions,
-        views: raw.views
+        views: raw.views,
+        compatibleViewClasses: [],
+        compatibleTxBuilderClasses: []
     };
 }
