@@ -9,7 +9,7 @@ import { DappletTxResult } from '../interfaces/dappletTxResult';
 import { DappletTemplate } from '../types/dappletTemplate';
 import { IncompatibleDappletError } from '../errors/incompatibleDappletError';
 import { toDappletRuntime } from './helpers';
-import { DappletRuntime } from 'src/types/dappletRuntime';
+import { DappletRuntime } from '../types/dappletRuntime';
 import { RegKey } from './regKey';
 
 // DappletContext (DC) is created in the moment of a wallet starting.
