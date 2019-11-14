@@ -4,6 +4,7 @@ import { TxBuilder } from "../interfaces/txBuilder";
 import { FeatureRegistry } from './featureRegistry';
 import { View } from '../interfaces/view';
 import { DappletRuntime } from '../types/dappletRuntime';
+import { RegKey } from './regKey';
 
 export class DappletFrameExecutor {
     private _state: State;
@@ -20,9 +21,9 @@ export class DappletFrameExecutor {
 
         for (const txName in dapplet.transactions) {
             const txTemplate = dapplet.transactions[txName];
-            const regKey = dapplet.aliases.get(txTemplate.type);
-            if (!regKey) throw new Error(`${txTemplate.type} is not found.`);
-            const txBuilderClass = this._featureRegistry.get(regKey);
+            const txBuilderGlobalName = dapplet.aliases.get(txTemplate.type);
+            if (!txBuilderGlobalName) throw new Error(`${txTemplate.type} is not found.`);
+            const txBuilderClass = this._featureRegistry.getByName(txBuilderGlobalName);
             if (!txBuilderClass) throw new Error("TxBuilderClass is not found");
             const builder = new txBuilderClass(txTemplate, this._state);
             this._txBuilders[txName] = builder;

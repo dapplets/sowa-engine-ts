@@ -7,7 +7,7 @@ import { TxBuilder } from 'src/interfaces/txBuilder';
 
 export type DappletRuntime = {
     // contexts/registries/usings/aliases
-    aliases: Map<string, RegKey>;
+    aliases: Map<string, string>;
 
     // // rel 2.0?
     // variables: {
