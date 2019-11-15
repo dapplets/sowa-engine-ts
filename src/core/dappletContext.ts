@@ -1,16 +1,13 @@
 import { DappletProvider } from "../interfaces/dappletProvider";
 import { DappletRequest } from "../types/dappletRequest";
 import { DappletEngine } from "./dappletEngine";
-import { DappletActivity } from "./dappletActivity";
 import { ContextConfig } from '../types/contextConfig';
 import { DEFAULT_CONFIG } from "../defaultConfig";
 import { FeatureRegistry } from './featureRegistry';
 import { DappletTxResult } from '../interfaces/dappletTxResult';
 import { DappletTemplate } from '../types/dappletTemplate';
 import { IncompatibleDappletError } from '../errors/incompatibleDappletError';
-import { toDappletRuntime } from './helpers';
-import { DappletRuntime } from '../types/dappletRuntime';
-import { RegKey } from './regKey';
+import { DappletExecutable } from './dappletExecutable';
 
 // DappletContext (DC) is created in the moment of a wallet starting.
 // DC is Singleton class.
@@ -31,11 +28,11 @@ export class DappletContext {
             request.frames.map(f =>
                 this._loadDapplet(f.dappletId)
                     .then(d => {
-                        const dappletRuntime = toDappletRuntime(d);
-                        this._validateAndPrepareDapplet(dappletRuntime);
+                        const de = new DappletExecutable(d);
+                        this._validateAndPrepareDapplet(de);
                         return {
                             dappletId: f.dappletId,
-                            dapplet: dappletRuntime,
+                            dapplet: de,
                             txMeta: f.txMeta
                         }
                     })
@@ -59,7 +56,7 @@ export class DappletContext {
         throw Error(`All configured providers don't contain the dapplet ${dappletId}.`);
     }
 
-    private _validateAndPrepareDapplet(dapplet: DappletRuntime) {
+    private _validateAndPrepareDapplet(dapplet: DappletExecutable) {
         const incompatibleFeatures: string[] = [];
 
         // validate and init views
@@ -72,7 +69,7 @@ export class DappletContext {
             if (!viewClass) continue;
 
             // ToDo: validate formatters
-            dapplet.compatibleViewClasses.push(viewClass);
+            //dapplet.compatibleViewClasses.push(viewClass);
 
             isCompatibleViewFound = true;
             break;
@@ -87,7 +84,7 @@ export class DappletContext {
             if (!txBuilderClass) {
                 incompatibleFeatures.push(txBuilderGlobalName);
             } else {
-                dapplet.compatibleViewClasses.push(txBuilderClass);
+                //dapplet.compatibleViewClasses.push(txBuilderClass);
             }
         }
         

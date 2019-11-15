@@ -1,10 +1,8 @@
 import { State } from "./state";
-import { DappletTemplate } from "../types/dappletTemplate";
 import { TxBuilder } from "../interfaces/txBuilder";
 import { FeatureRegistry } from './featureRegistry';
 import { View } from '../interfaces/view';
-import { DappletRuntime } from '../types/dappletRuntime';
-import { RegKey } from './regKey';
+import { DappletExecutable } from './dappletExecutable';
 
 export class DappletFrameExecutor {
     private _state: State;
@@ -12,7 +10,7 @@ export class DappletFrameExecutor {
     private _features: { [alias: string]: any } = {};
     private _compatibleView?: View;
 
-    constructor(public readonly dapplet: DappletRuntime, txMeta: any, private _featureRegistry: FeatureRegistry) {
+    constructor(public readonly dapplet: DappletExecutable, txMeta: any, private _featureRegistry: FeatureRegistry) {
         this._state = new State(dapplet.variables, txMeta);
     }
 
