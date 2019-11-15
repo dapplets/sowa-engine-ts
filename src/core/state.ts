@@ -1,4 +1,4 @@
-import { utils, ethers } from "ethers";
+import { utils } from "ethers";
 
 // It stores incoming JSON data and statuses of transaction execution (?)
 export class State {
