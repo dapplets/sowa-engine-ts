@@ -1,9 +1,8 @@
 import { ViewTemplate } from './viewTemplate';
 import { TxTemplate } from './txTemplate';
-import { RegKey } from 'src/core/regKey';
-import { View } from 'src/interfaces/view';
+import { View } from '../interfaces/view';
 import { Type } from './type';
-import { TxBuilder } from 'src/interfaces/txBuilder';
+import { TxBuilder } from '../interfaces/txBuilder';
 
 export type DappletRuntime = {
     // contexts/registries/usings/aliases

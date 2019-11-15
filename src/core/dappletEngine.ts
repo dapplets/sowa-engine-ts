@@ -1,6 +1,6 @@
 import { DappletFrameExecutor } from "./dappletFrameExecutor";
 import { DappletContext } from './dappletContext';
-import { DappletFrameRuntime } from 'src/types/loadedDappletFrame';
+import { DappletFrameRuntime } from '../types/dappletFrameRuntime';
 
 export class DappletEngine {
     private _frameExecutors: DappletFrameExecutor[] = [];
