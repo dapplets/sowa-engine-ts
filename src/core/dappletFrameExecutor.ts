@@ -13,7 +13,7 @@ export class DappletFrameExecutor {
     private _compatibleView?: View;
 
     constructor(public readonly dapplet: DappletRuntime, txMeta: any, private _featureRegistry: FeatureRegistry) {
-        this._state = new State(txMeta);
+        this._state = new State(dapplet.variables, txMeta);
     }
 
     public async run(): Promise<void> {
