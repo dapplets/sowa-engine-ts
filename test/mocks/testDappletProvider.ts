@@ -8,10 +8,9 @@ export class TestDappletProvider implements DappletProvider {
             case "4":
                 return {
                     aliases: {
-                        // ToDo: remove array
-                      "view-plain-mustache": ["http://types.dapplets.org/view/plain-mustache/1.0"],
-                      "view-html-mustache": ["http://types.dapplets.org/view/html-mustache/1.0"],
-                      "builder-tx-sol": ["http://types.dapplets.org/ethereum/txbuilders/solidity/1.0"]
+                      "view-plain-mustache": "http://types.dapplets.org/view/plain-mustache/1.0",
+                      "view-html-mustache": "http://types.dapplets.org/view/html-mustache/1.0",
+                      "builder-tx-sol": "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0"
                     },
               
                     views: [
@@ -38,8 +37,8 @@ export class TestDappletProvider implements DappletProvider {
             case "5":
                 return {
                     "aliases": {
-                        "view-plain-mustache": ["http://types.dapplets.org/view/plain-mustache/1.0"],
-                        "builder-tx-sol": ["http://types.dapplets.org/ethereum/txbuilders/solidity/1.0"]
+                        "view-plain-mustache": "http://types.dapplets.org/view/plain-mustache/1.0",
+                        "builder-tx-sol": "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0"
                     },
                     
                     "views": [
