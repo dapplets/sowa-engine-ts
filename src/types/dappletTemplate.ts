@@ -8,10 +8,10 @@ export type DappletTemplate = {
     };
 
     // // rel 2.0?
-    // variables: {
-    //     //DiP-02.1: "name" is better than "key"?
-    //     [key: string]: string;
-    // };
+    variables?: {
+        //DiP-02.1: "name" is better than "key"?
+        [key: string]: string;
+    };
 
     views: ViewTemplate[];
 

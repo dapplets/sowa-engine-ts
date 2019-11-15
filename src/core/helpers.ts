@@ -1,7 +1,5 @@
-import { RegKey } from './regKey';
 import { DappletRuntime } from '../types/dappletRuntime';
 import { DappletTemplate } from '../types/dappletTemplate';
-
 
 export function resolveAliasMap(aliasMap: { [alias: string]: string }): Map<string, string> {
     const map: Map<string, string> = new Map();
@@ -21,6 +19,7 @@ export function resolveAliasMap(aliasMap: { [alias: string]: string }): Map<stri
 export function toDappletRuntime(raw: DappletTemplate): DappletRuntime {
     return {
         aliases: resolveAliasMap(raw.aliases),
+        variables: raw.variables,
         transactions: raw.transactions,
         views: raw.views,
         compatibleViewClasses: [],
