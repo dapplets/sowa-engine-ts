@@ -48,7 +48,10 @@ export class DappletExecutable {
                 console.warn(`View "${globalName}" is not compatible.`)
                 continue
             }
-            this.views.push(new ctor(viewDecl, this.state))
+            const view = new ctor(viewDecl, this.state)
+            this.state.onUpdate(() => view.render())
+            view.render()
+            this.views.push(view)
         }
         return this.views
     }

@@ -1,11 +1,9 @@
-import { DappletProvider } from "../interfaces/dappletProvider";
 import { DappletRequest } from "../types/dappletRequest";
 import { DappletEngine } from "./dappletEngine";
 import { ContextConfig } from '../types/contextConfig';
 import { DEFAULT_CONFIG } from "../defaultConfig";
 import { DappletTxResult } from '../interfaces/dappletTxResult';
 import { DappletTemplate } from '../types/dappletTemplate';
-import { IncompatibleDappletError } from '../errors/incompatibleDappletError';
 import { DappletExecutable } from './dappletExecutable';
 
 // DappletContext (DC) is created in the moment of a wallet starting.

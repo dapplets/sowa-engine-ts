@@ -1,7 +1,8 @@
-import { ViewTemplate } from 'src/types/viewTemplate';
-import { State } from 'src/core/state';
+import { ViewTemplate } from '../types/viewTemplate';
+import { State } from '../core/state';
 
 export interface View {
+    render(): void
 }
 
 export interface ViewConstructor {
