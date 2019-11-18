@@ -14,32 +14,26 @@ import { DappletExecutable } from './dappletExecutable';
 // DC loads and verifies DappletTemplates and other resources referenced in Frames. And rejects the Request if any errors.
 export class DappletContext {
     public dappletProviders: DappletProvider[];
-    public featureRegistry: FeatureRegistry;
 
-    constructor(config: ContextConfig = DEFAULT_CONFIG) {
+    constructor(public readonly config: ContextConfig = DEFAULT_CONFIG) {
         config = { ...DEFAULT_CONFIG, ...config };
         this.dappletProviders = config.providers! || [];
-        this.featureRegistry = new FeatureRegistry(config.features || []);
     }
 
     async processRequest(request: DappletRequest): Promise<DappletTxResult> {
-        // dapplet loading and validation
-        const frames = await Promise.all(
+        // dapplet loading and prepare for execution
+        const frameExecutables = await Promise.all(
             request.frames.map(f =>
                 this._loadDapplet(f.dappletId)
-                    .then(d => {
-                        const de = new DappletExecutable(d);
-                        this._validateAndPrepareDapplet(de);
-                        return {
-                            dappletId: f.dappletId,
-                            dapplet: de,
-                            txMeta: f.txMeta
-                        }
-                    })
+                    .then(dappletTemplate => new DappletExecutable(
+                        dappletTemplate,
+                        f.txMeta,
+                        this.config
+                    ))
             )
         );
 
-        const engine = new DappletEngine(frames, this);
+        const engine = new DappletEngine(frameExecutables, this);
         engine.run();
 
         //const activity = new DappletActivity(request, this);
@@ -54,43 +48,6 @@ export class DappletContext {
             } catch (err) { }
         }
         throw Error(`All configured providers don't contain the dapplet ${dappletId}.`);
-    }
-
-    private _validateAndPrepareDapplet(dapplet: DappletExecutable) {
-        const incompatibleFeatures: string[] = [];
-
-        // validate and init views
-        let isCompatibleViewFound = false;
-        // ToDo: think about whose view is priority (wallet developer vs dapplet developer)
-        for (const viewTemplate of dapplet.views) {
-            const viewGlobalName = dapplet.aliases.get(viewTemplate.type);
-            if (!viewGlobalName) throw new Error(`Alias for ${viewTemplate.type} is not defined in usings.`);
-            const viewClass = this.featureRegistry.getByName(viewGlobalName);
-            if (!viewClass) continue;
-
-            // ToDo: validate formatters
-            //dapplet.compatibleViewClasses.push(viewClass);
-
-            isCompatibleViewFound = true;
-            break;
-        }
-
-        // validate and init txBuilders
-        for (const txName in dapplet.transactions) {
-            const txAlias = dapplet.transactions[txName].type;
-            const txBuilderGlobalName = dapplet.aliases.get(txAlias);
-            if (!txBuilderGlobalName) throw new Error(`Alias for ${txAlias} is not defined in usings.`);
-            const txBuilderClass = this.featureRegistry.getByName(txBuilderGlobalName);
-            if (!txBuilderClass) {
-                incompatibleFeatures.push(txBuilderGlobalName);
-            } else {
-                //dapplet.compatibleViewClasses.push(txBuilderClass);
-            }
-        }
-        
-        if (incompatibleFeatures.length > 0 || !isCompatibleViewFound) {
-            throw new IncompatibleDappletError(incompatibleFeatures);
-        }
     }
 
     async loadResource(id: string): Promise<ArrayBuffer> {
