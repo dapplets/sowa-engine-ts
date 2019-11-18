@@ -13,17 +13,20 @@ export class DappletExecutable {
     public state: State;
     public transactions: { [key: string]: TxBuilder; } = {};
     public views: View[] = [];
+    public activeView: View;
 
     constructor(template: DappletTemplate, requestData: Uint8Array, config: ContextConfig) {
         this.aliases = this._createAliasMap(template.aliases)
         this.state = this._createState(template.variables || {}, requestData)
-        this.views = this._loadCompatibleViews(template.views, config.views || [])
-        this.transactions = this._createTxBuilders(template.transactions, config.builders || [])
+        this._loadCompatibleViews(template.views, config.views || [])
+        this._createTxBuilders(template.transactions, config.builders || [])
         this._validate();
+
+        this.activeView = this.views[0]; //ToDo: MayBe implement another view selection strategy 
     }
 
     private _createAliasMap(aliasMap: { [alias: string]: string }): Map<string, string> {
-        //ToDo: endless recursion protection
+        //ToDo: add endless recursion protection
         function replacer(key: string, aliasMap: { [alias: string]: string }): string {
             return aliasMap[key].replace(/@[a-zA-Z_$][0-9a-zA-Z_$]*/gm, (ref: string) => replacer(ref, aliasMap))
         }
@@ -39,7 +42,7 @@ export class DappletExecutable {
         return new State(variablesDecl, requestData);
     }
 
-    private _loadCompatibleViews(viewDecls: ViewTemplate[], viewCtors: ViewConstructor[]): View[] {
+    private _loadCompatibleViews(viewDecls: ViewTemplate[], viewCtors: ViewConstructor[]) {
         for (const viewDecl of viewDecls) {
             const globalName = this.aliases.get(viewDecl.type)
             if (!globalName) throw Error(`Alias for ${viewDecl.type} is not defined in usings.`)
@@ -49,14 +52,11 @@ export class DappletExecutable {
                 continue
             }
             const view = new ctor(viewDecl, this.state)
-            this.state.onUpdate(() => view.render())
-            view.render()
             this.views.push(view)
         }
-        return this.views
     }
 
-    private _createTxBuilders(txDecls: { [key: string]: TxTemplate; }, builderCtors: TxBuilderConstructor[]): { [key: string]: TxBuilder; } {
+    private _createTxBuilders(txDecls: { [key: string]: TxTemplate; }, builderCtors: TxBuilderConstructor[]) {
         for (const txName in txDecls) {
             const globalName = this.aliases.get(txDecls[txName].type)
             if (!globalName) throw Error(`Alias for ${txDecls[txName].type} is not defined in usings.`)
@@ -64,7 +64,6 @@ export class DappletExecutable {
             if (!ctor) throw Error(`TxBuilder "${globalName}" is not compatible.`)
             this.transactions[txName] = new ctor(txDecls[txName], this.state)
         }
-        return this.transactions
     }
 
     private _validate() {

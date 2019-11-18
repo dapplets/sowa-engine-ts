@@ -5,7 +5,7 @@ import { DappletExecutable } from './dappletExecutable';
 export class DappletEngine {
     private _frameExecutors: DappletFrameExecutor[] = [];
 
-    constructor(dapplets: DappletExecutable[], private _context: DappletContext) {
+    constructor(private dapplets: DappletExecutable[], private _context: DappletContext) {
         for (const dapplet of dapplets) {
             const executor = new DappletFrameExecutor(dapplet);
             this._frameExecutors.push(executor);
@@ -18,7 +18,17 @@ export class DappletEngine {
 
     // }
 
-    async run(): Promise<void> {
+    async start(): Promise<void> {
+        for (const exec of this.dapplets) {
+            exec.activeView.render()
+        }
+    }
+
+    public onApproved() {
+        run()
+    }
+
+    private async run(): Promise<void> {
         const promises = this._frameExecutors.map(f => f.run());
         await Promise.all(promises);
     }
