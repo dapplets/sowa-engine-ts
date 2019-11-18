@@ -3,6 +3,8 @@ import { State } from 'src/core/state';
 
 export interface TxBuilder {
     txConfig: any;
+    isReadyToRun(): boolean;
+    isWaiting():boolean
     run(): Promise<any>; // async
     on(event: string, callback: Function): void; // for running of new state machine
 }

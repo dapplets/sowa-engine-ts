@@ -3,13 +3,8 @@ import { DappletContext } from './dappletContext';
 import { DappletExecutable } from './dappletExecutable';
 
 export class DappletEngine {
-    private _frameExecutors: DappletFrameExecutor[] = [];
 
-    constructor(private dapplets: DappletExecutable[], private _context: DappletContext) {
-        for (const dapplet of dapplets) {
-            const executor = new DappletFrameExecutor(dapplet);
-            this._frameExecutors.push(executor);
-        }
+    constructor(private _frameExecutables: DappletExecutable[], private _context: DappletContext) {
     }
 
     // // It's called when Storage/State is changing.
@@ -19,7 +14,7 @@ export class DappletEngine {
     // }
 
     async start(): Promise<void> {
-        for (const exec of this.dapplets) {
+        for (const exec of this._frameExecutables) {
             exec.activeView.render()
         }
     }
@@ -29,7 +24,7 @@ export class DappletEngine {
     }
 
     private async run(): Promise<void> {
-        const promises = this._frameExecutors.map(f => f.run());
+        const promises = this._frameExecutables.map(f => f.run());
         await Promise.all(promises);
     }
 }
