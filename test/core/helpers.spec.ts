@@ -2,6 +2,7 @@ import 'mocha';
 import { assert } from "chai";
 import { DappletExecutable } from "../../src/core/dappletExecutable";
 import { DappletTemplate } from '../../src/types/dappletTemplate';
+import { DEFAULT_CONFIG } from '../../src/defaultConfig';
 
 describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', () => {
   it('aliases replacement', async () => {
@@ -17,7 +18,7 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
       transactions: {}
     };
 
-    const de = new DappletExecutable(input);
+    const de = new DappletExecutable(input, new Uint8Array(), DEFAULT_CONFIG);
 
     const expected = new Map<string, string>();
     expected.set("@baseUrl", "http://dapplet.org");

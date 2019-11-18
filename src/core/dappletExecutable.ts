@@ -9,7 +9,7 @@ import { State } from './state';
 type VariablesDeclType = { [alias: string]: string }
 
 export class DappletExecutable {
-    public aliases: Map<string, string>;
+    public aliases = new Map<string, string>();
     public state: State;
     public transactions: { [key: string]: TxBuilder; };
     public views: View[];
@@ -17,8 +17,8 @@ export class DappletExecutable {
     constructor(template: DappletTemplate, requestData: Uint8Array, context: ContextConfig) {
         this.aliases = this._createAliasMap(template.aliases)
         this.state = this._createState(template.variables || {}, requestData)
-        this.views = this._loadCompatibleViews(template.views, context.views)
-        this.transactions = this._createTxBuilders(template.transactions, context.builders)
+        this.views = this._loadCompatibleViews(template.views, context.views || [])
+        this.transactions = this._createTxBuilders(template.transactions, context.builders || [])
         this._validate();
     }
 
@@ -43,7 +43,7 @@ export class DappletExecutable {
         return viewCtors.map(ctor => {
             const viewDecl = viewDecls.find(viewDecl => {
                 const globalName = this.aliases.get(viewDecl.type)
-                if (!globalName) throw Error(`Alias for ${viewDecl.type} is not defined in usings.`)
+                //if (!globalName) throw Error(`Alias for ${viewDecl.type} is not defined in usings.`)
                 return ctor.GLOBAL_NAME == globalName
             })
             return viewDecl && new ctor(viewDecl, this.state)

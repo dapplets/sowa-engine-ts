@@ -21,7 +21,7 @@ export class DappletContext {
 
     async processRequest(request: DappletRequest): Promise<DappletTxResult> {
         // dapplet loading and prepare for execution
-        const frameExecutables = await Promise.all(
+        const dapplets = await Promise.all(
             request.frames.map(frame =>
                 this._loadDapplet(frame.dappletId)
                     .then(dappletTemplate => new DappletExecutable(
@@ -32,7 +32,7 @@ export class DappletContext {
             )
         );
 
-        const engine = new DappletEngine(frameExecutables, this);
+        const engine = new DappletEngine(dapplets, this);
         engine.run();
 
         //const activity = new DappletActivity(request, this);

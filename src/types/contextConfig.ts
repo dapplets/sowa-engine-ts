@@ -5,7 +5,7 @@ import { FormatterConstructor } from '../interfaces/formatter';
 
 export type ContextConfig = {
     providers?: DappletProvider[]
-    views: ViewConstructor[]
-    builders: TxBuilderConstructor[]
-    formatters: FormatterConstructor[]
+    views?: ViewConstructor[]
+    builders?: TxBuilderConstructor[]
+    formatters?: FormatterConstructor[]
 }
