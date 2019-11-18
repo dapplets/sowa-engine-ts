@@ -12,11 +12,10 @@ import { DappletExecutable } from './dappletExecutable';
 // DC is Singleton class.
 // DC loads and verifies DappletTemplates and other resources referenced in Frames. And rejects the Request if any errors.
 export class DappletContext {
-    public dappletProviders: DappletProvider[];
+    public readonly config: ContextConfig
 
-    constructor(public readonly config: ContextConfig = DEFAULT_CONFIG) {
-        config = { ...DEFAULT_CONFIG, ...config };
-        this.dappletProviders = config.providers! || [];
+    constructor(config: ContextConfig = DEFAULT_CONFIG) {
+        this.config = { ...DEFAULT_CONFIG, ...config };
     }
 
     async processRequest(request: DappletRequest): Promise<DappletTxResult> {
@@ -40,7 +39,7 @@ export class DappletContext {
     }
 
     private async _loadDapplet(dappletId: string): Promise<DappletTemplate> {
-        for (const provider of this.dappletProviders) {
+        for (const provider of this.config.providers || []) {
             try {
                 const dapplet = await provider.loadDapplet(dappletId);
                 if (dapplet) return dapplet;
