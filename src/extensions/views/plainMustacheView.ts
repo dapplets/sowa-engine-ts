@@ -1,14 +1,10 @@
-import { View } from "../../interfaces/view";
+import { View, BaseView } from "../../interfaces/view";
 import { ViewTemplate } from "../../types/viewTemplate";
 import { State } from '../../core/state';
 import { utils } from "ethers";
 
-export class PlainMustacheView implements View {
+export class PlainMustacheView extends BaseView implements View {
     public static readonly GLOBAL_NAME = "http://types.dapplets.org/view/plain-mustache/1.0"
-
-    constructor(private viewTemplate: ViewTemplate, private state: State) {
-
-    }
 
     public render() {
         let { template } = this.viewTemplate

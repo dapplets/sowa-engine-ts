@@ -30,7 +30,7 @@ export class DappletContext {
         );
 
         const engine = new DappletEngine(dapplets, this);
-        engine.run();
+        engine.start();
 
         //const activity = new DappletActivity(request, this);
         return {};
