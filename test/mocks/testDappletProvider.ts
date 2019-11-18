@@ -64,6 +64,46 @@ export class TestDappletProvider implements DappletProvider {
             }
           }
         };
+      case "6":
+        // EXAMPLE FOR DIP
+        return {
+          "aliases": {},
+
+          "variables": {
+            "data": "blob",
+            "price": "uint256"
+          },
+
+          "views": [
+            {
+              "type": "view-plain-mustache",
+              "template": "Add the picture to the marketplace for {{price}} ETH." // UINT256 => STRING
+            }
+          ],
+
+          "transactions": {
+            // [saveToSwarm, payForMarketplace] => addToMarketplace
+            "saveToSwarm": {
+              "type": "builder-tx-swarm",
+              "data": "{{data}}"
+            },
+            "payForMarketplace": {
+              "type": "builder-tx-otherchain",
+              "to": "0xDEADBEEF",
+              "value": 500000000000000
+            },
+            "addToMarketplace": {
+              "type": "builder-tx-sol",
+              "to": "0xccf7930d9b1fa67d101e3de18de5416dc66bd852",
+              "function": "add(uint256, uint256, uint256)",
+              "args": [
+                "saveToSwarm.hash", // SWARM HASH => UINT256 ?
+                "payForMarketplace.code", // CUSTOM TX's CODE => UINT256
+                "price"
+              ]
+            }
+          }
+        }
       default:
         throw new Error("There is no template with such id.");
     }
