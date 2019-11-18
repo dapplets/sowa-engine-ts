@@ -3,7 +3,6 @@ import { DappletRequest } from "../types/dappletRequest";
 import { DappletEngine } from "./dappletEngine";
 import { ContextConfig } from '../types/contextConfig';
 import { DEFAULT_CONFIG } from "../defaultConfig";
-import { FeatureRegistry } from './featureRegistry';
 import { DappletTxResult } from '../interfaces/dappletTxResult';
 import { DappletTemplate } from '../types/dappletTemplate';
 import { IncompatibleDappletError } from '../errors/incompatibleDappletError';
@@ -23,11 +22,11 @@ export class DappletContext {
     async processRequest(request: DappletRequest): Promise<DappletTxResult> {
         // dapplet loading and prepare for execution
         const frameExecutables = await Promise.all(
-            request.frames.map(f =>
-                this._loadDapplet(f.dappletId)
+            request.frames.map(frame =>
+                this._loadDapplet(frame.dappletId)
                     .then(dappletTemplate => new DappletExecutable(
                         dappletTemplate,
-                        f.txMeta,
+                        frame.txMeta || new Uint8Array(0),
                         this.config
                     ))
             )
