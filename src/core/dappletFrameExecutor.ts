@@ -10,7 +10,7 @@ export class DappletFrameExecutor {
     private _features: { [alias: string]: any } = {};
     private _compatibleView?: View;
 
-    constructor(public readonly dapplet: DappletExecutable, txMeta: any, private _featureRegistry: FeatureRegistry) {
+    constructor(public readonly dapplet: DappletExecutable, txMeta: any) {
         this._state = new State(dapplet.variables, txMeta);
     }
 

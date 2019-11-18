@@ -8,7 +8,9 @@ import { PlainMustacheView } from './extensions/views/plainMustacheView';
 
 const DEFAULT_CONFIG: ContextConfig = {
     providers: [new GithubDappletProvider()], // new SwarmDappletProvider()
-    features: [EthTxBuilder, CameraFormatter, EthAddressHtmlFormatter, PlainMustacheView]
+    views: [PlainMustacheView],
+    builders: [EthTxBuilder],
+    formatters: [CameraFormatter, EthAddressHtmlFormatter]
 };
 
 export { DEFAULT_CONFIG }

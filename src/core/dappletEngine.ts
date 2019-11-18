@@ -7,7 +7,7 @@ export class DappletEngine {
 
     constructor(dappletFrames: DappletFrameExecutable[], private _context: DappletContext) {
         for (const frame of dappletFrames) {
-            const executor = new DappletFrameExecutor(frame.dapplet, frame.txMeta, this._context.featureRegistry);
+            const executor = new DappletFrameExecutor(frame.dapplet, frame.txMeta, this._context.config);
             this._frameExecutors.push(executor);
         }
     }
