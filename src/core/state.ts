@@ -7,6 +7,7 @@ export class State {
     // txBuilder.status.something
 
     private _map = new Map<string, Uint8Array>();
+    private _updateHandlers: (() => void)[] = [];
 
     constructor(types?: { [variable: string]: string }, data?: Uint8Array) {
         if (!types && !data) return;
@@ -15,6 +16,7 @@ export class State {
         const varNames = Object.keys(types);
         const typeNames = Object.values(types);
 
+        // ToDo: This code is chain-specific!
         const decodedValues = utils.defaultAbiCoder.decode(typeNames, data);
 
         for (let i = 0; i < decodedValues.length; i++) {
@@ -30,5 +32,10 @@ export class State {
 
     public set(key: string, value: Uint8Array) {
         this._map.set(key, value);
+        this._updateHandlers.forEach(callback => callback())
+    }
+
+    public onUpdate(callback: () => void) {
+        this._updateHandlers.push(callback);
     }
 }
