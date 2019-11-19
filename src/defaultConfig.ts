@@ -10,7 +10,12 @@ const DEFAULT_CONFIG: ContextConfig = {
     providers: [new GithubDappletProvider()], // new SwarmDappletProvider()
     views: [PlainMustacheView],
     builders: [EthTxBuilder],
-    formatters: [CameraFormatter, EthAddressHtmlFormatter]
+    formatters: [CameraFormatter, EthAddressHtmlFormatter],
+    typeConverter: DefaultTypeConverter
 };
+
+function DefaultTypeConverter(fromType:string, toType: string, value: any) : any {
+    throw "NOT IMPLEMENTED DefaultTypeConverter"
+}
 
 export { DEFAULT_CONFIG }

@@ -1,5 +1,6 @@
 import { DappletProvider } from '../interfaces/dappletProvider';
 import { ViewConstructor } from '../interfaces/view';
+import { TypeConverter } from '../interfaces/interfaces';
 import { TxBuilderConstructor } from '../interfaces/txBuilder';
 import { FormatterConstructor } from '../interfaces/formatter';
 
@@ -8,4 +9,5 @@ export type ContextConfig = {
     views?: ViewConstructor[]
     builders?: TxBuilderConstructor[]
     formatters?: FormatterConstructor[]
+    typeConverter: TypeConverter
 }

@@ -11,5 +11,5 @@ export interface TxBuilder {
 
 export interface TxBuilderConstructor {
     GLOBAL_NAME: string;
-    new (txTemplate: TxTemplate, state: State): TxBuilder;
+    new (txTemplate: TxTemplate, state: State, typeConverter: TypeConverter): TxBuilder;
 }
