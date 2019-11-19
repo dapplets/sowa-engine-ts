@@ -4,6 +4,10 @@ import { GithubDappletProvider } from './providers/githubDappletProvider';
 import { CameraFormatter } from './extensions/formatters/cameraFormatter';
 import { EthAddressHtmlFormatter } from './extensions/formatters/ethAddressHtmlFormatter';
 import { PlainMustacheView } from './extensions/views/plainMustacheView';
+import { Signers } from './interfaces/signers';
+import { EthSigner } from "./extensions/signers/ethSigner";
+import { SwarmSigner } from "./extensions/signers/swarmSigner";
+
 //import { SwarmDappletProvider } from './providers/swarmDappletProvider';
 
 const DEFAULT_CONFIG: ContextConfig = {
@@ -11,7 +15,8 @@ const DEFAULT_CONFIG: ContextConfig = {
     views: [PlainMustacheView],
     builders: [EthTxBuilder],
     formatters: [CameraFormatter, EthAddressHtmlFormatter],
-    typeConverter: DefaultTypeConverter
+    signers:new Signers([new EthSigner(), new SwarmSigner()]),
+    typeConverter: DefaultTypeConverter,
 };
 
 function DefaultTypeConverter(fromType:string, toType: string, value: any) : any {
