@@ -1,4 +1,3 @@
-import { DappletFrameExecutor } from "./dappletFrameExecutor";
 import { DappletContext } from './dappletContext';
 import { DappletExecutable } from './dappletExecutable';
 
