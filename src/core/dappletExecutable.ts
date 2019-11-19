@@ -20,7 +20,7 @@ export class DappletExecutable {
         this.aliases = this._createAliasMap(template.aliases)
         this.state = this._createState(template.variables || {}, requestData)
         this._loadCompatibleViews(template.views, config.views || [])
-        this._createTxBuilders(template.transactions, config.builders || [], config.typeConverter)
+        this._createTxBuilders(template.transactions, config.builders || [], config.typeConverter!)
         this._validate();
 
         this.activeView = this.views[0]; //ToDo: MayBe implement another view selection strategy 
