@@ -1,5 +1,6 @@
-import { TxTemplate } from 'src/types/txTemplate';
-import { State } from 'src/core/state';
+import { TxTemplate } from '../types/txTemplate';
+import { State } from '../core/state';
+import { TypeConverter } from '../types/typeConverter';
 
 export interface TxBuilder {
     txConfig: any;
