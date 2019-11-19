@@ -22,8 +22,17 @@ export class DappletEngine {
         run()
     }
 
-    private async run(): Promise<void> {
-        const promises = this._frameExecutables.map(f => f.run());
-        await Promise.all(promises);
+    private run(): void {
+        //prepare transactions
+        const framePayloads = this._frameExecutables.map(f => f.prepare())
+        //pre-send processing and checks (like multisigs)
+
+        //send all transactions
+        framePayloads.forEach(framePayload => {
+            framePayload.forEach((data,dappletId)=>{
+                //ToDo: create a subscribtion here
+                this._context.config.signers.get(name)!.signAndSend(data)
+            })
+        })
     }
 }

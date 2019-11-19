@@ -17,8 +17,8 @@ type EthTxTemplate = TxTemplate & {
 }
 
 export class EthTxBuilder implements TxBuilder {
-
     public static readonly GLOBAL_NAME = "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0";
+    
     public txConfig: any;
     private state: State = State.INIT;
     private config: EthTxConfig
@@ -45,10 +45,6 @@ export class EthTxBuilder implements TxBuilder {
         })
         const argBytes = ethers.utils.defaultAbiCoder.encode(argTypes, vars).substring(2)
         return methodSig + argBytes
-    }
-
-    public sendTx(payload: string) {
-        //ToDo: construct Tx, sign, send
     }
 
     public isReadyToRun(): boolean {
