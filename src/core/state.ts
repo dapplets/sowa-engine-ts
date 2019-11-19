@@ -27,12 +27,17 @@ export class State {
     }
 
     public get(key: string): Uint8Array | undefined {
+        //ToDo: Resolve aliases authomatically
         return this._map.get(key);
     }
 
     public set(key: string, value: Uint8Array) {
         this._map.set(key, value);
         this._updateHandlers.forEach(callback => callback())
+    }
+
+    public getTyped(key: string): [Uint8Array, string] {
+        throw "NOT IMPLEMENTED getType(...)"
     }
 
     public onUpdate(callback: () => void) {
