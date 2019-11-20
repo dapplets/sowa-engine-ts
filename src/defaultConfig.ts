@@ -15,11 +15,11 @@ const DEFAULT_CONFIG: ContextConfig = {
     views: [PlainMustacheView],
     builders: [EthTxBuilder],
     formatters: [CameraFormatter, EthAddressHtmlFormatter],
-    signers:new Signers([new EthSigner(), new SwarmSigner()]),
+    signers: new Signers([new EthSigner(), new SwarmSigner()]),
     typeConverter: DefaultTypeConverter,
 };
 
-function DefaultTypeConverter(fromType:string, toType: string, value: any) : any {
+function DefaultTypeConverter(fromType: string, toType: string, value: any): any {
     throw "NOT IMPLEMENTED DefaultTypeConverter"
 }
 
