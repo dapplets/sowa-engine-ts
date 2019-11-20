@@ -4,8 +4,7 @@ const MIN_WAIT_FOR_NEXT_RUN_MLS = 1000
 
 export class DappletEngine {
 
-    isRunning: boolean=false;
-    isStateDirty: boolean=false;
+    needReEvaluate: boolean=false;
  
     constructor(private _frameExecutables: DappletExecutable[], private _context: DappletContext) {
     }
@@ -24,33 +23,35 @@ export class DappletEngine {
 
     public onApproved() {
         //ToDo: do we need notifications from state or we can just recalculate all "when"?
-        this._frameExecutables.forEach(f => f.state.onUpdate(this.setStateIsDirty))
-        run()
+        this._frameExecutables.forEach(f => f.state.onUpdate(() => this.needReEvaluate=true))
+        ;(async ()=>run())()
     }
 
-    private run(): void {
-        if (!this.isRunning && this.isStateDirty){
-            this.isRunning=true;
-            //prepare transactions
-            const framePayloads = this._frameExecutables.map(f => f.prepare())
-            //pre-send processing and checks (like multisigs)
+    private async run() {
+        let n=0;
+        do {
+            if (this.needReEvaluate) {
+                this.needReEvaluate = false;
+                //prepare transactions
+                const framePayloads = this._frameExecutables.map(f => f.prepare())
+                //pre-send processing and checks (like multisigs)
 
-            //ToDo: make overall payload checks 
+                //ToDo: make overall payload checks 
 
-            //send all transactions
-            framePayloads.forEach(framePayload => {
-                framePayload.forEach((data,dappletId)=>{
-                    //ToDo: create a subscribtion here
-                    this._context.config.signers.get(name)!.signAndSend(data)
+                //send all transactions
+                framePayloads.forEach(framePayload => {
+                    framePayload.forEach(([data,builderName])=>{
+                        ++n;
+                        this._context.config.signers.get(builderName)!.signAndSend(data)
+                            .then(()=>--n)
+                    })
                 })
-            })
-            this.isStateDirty = false;
-            this.isRunning=false;
-        }
-        setTimeout(this.run,MIN_WAIT_FOR_NEXT_RUN_MLS)
+            }
+            await this.sleep(MIN_WAIT_FOR_NEXT_RUN_MLS)
+        } while(n>0)
     }
 
-    private setStateIsDirty() {
-        this.isStateDirty = true;
+    private sleep(millis:number) {
+        return new Promise(resolve => setTimeout(resolve, millis));
     }
 }
