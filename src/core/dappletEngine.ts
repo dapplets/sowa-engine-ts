@@ -37,6 +37,9 @@ export class DappletEngine {
                 //pre-send processing and checks (like multisigs)
 
                 //ToDo: make overall payload checks 
+                //1. iterate over frames
+                //2. for each dependend frame of the frame DO
+                //3. re-work payloads of the dependend frame
 
                 //send all transactions
                 framePayloads.forEach(framePayload => {
@@ -48,7 +51,7 @@ export class DappletEngine {
                 })
             }
             await this.sleep(MIN_WAIT_FOR_NEXT_RUN_MLS)
-        } while(n>0)
+        } while(n>0) //ToDo: check it: loop finishes if some tx are waiting for unrealistic conditions. Correct?
     }
 
     private sleep(millis:number) {
