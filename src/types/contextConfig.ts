@@ -11,5 +11,5 @@ export type ContextConfig = {
     builders?: TxBuilderConstructor[]
     formatters?: FormatterConstructor[]
     typeConverter?: TypeConverter
-    signers: Signers
+    signers?: Signers
 }

@@ -45,7 +45,7 @@ export class DappletEngine {
                 framePayloads.forEach(framePayload => {
                     framePayload.forEach(([data,builderName])=>{
                         ++n;
-                        this._context.config.signers.get(builderName)!.signAndSend(data)
+                        this._context.config.signers?.get(builderName)!.signAndSend(data)
                             .then(()=>--n)
                     })
                 })
