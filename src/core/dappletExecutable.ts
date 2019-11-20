@@ -26,15 +26,17 @@ export class DappletExecutable {
         this.activeView = this.views[0]; //ToDo: MayBe implement another view selection strategy 
     }
 
-    public prepare(): Map<string,any> {
-        const map = new Map()
-        for(let name in this.transactions){
-            const builder = this.transactions[name];
+    public prepare(): [string,any][] {
+        const data:[string,any][] = []
+        for(let type in this.transactions){
+            //ToDo: error! two builders with the same type will not work!!!
+            //ToDo: use name/id ?
+            const builder = this.transactions[type];
             if (builder.isReadyToRun()) {
-                map.set(name,builder.prepareTxPayload())
+                data.push([type,builder.prepareTxPayload()])
             }
         }
-        return map
+        return data
     }
 
     private _createAliasMap(aliasMap: { [alias: string]: string }): Map<string, string> {
