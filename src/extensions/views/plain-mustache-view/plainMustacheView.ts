@@ -1,6 +1,6 @@
-import { View, BaseView } from "../../interfaces/view";
-import { ViewTemplate } from "../../types/viewTemplate";
-import { State } from '../../core/state';
+import { View, BaseView } from "../../../interfaces/view";
+import { ViewTemplate } from "../../../types/viewTemplate";
+import { State } from '../../../core/state';
 import { utils } from "ethers";
 
 export class PlainMustacheView extends BaseView implements View {

@@ -1,12 +1,12 @@
 import { ContextConfig } from "./types/contextConfig";
-import { EthTxBuilder } from "./support/ethereum/ethTxBuilder";
+import { EthTxBuilder } from "./extensions/ethereum/ethTxBuilder";
 import { GithubDappletProvider } from './providers/githubDappletProvider';
 import { CameraFormatter } from './extensions/formatters/cameraFormatter';
-import { EthAddressHtmlFormatter } from './support/ethereum/ethAddressHtmlFormatter';
-import { PlainMustacheView } from './extensions/views/plainMustacheView';
+import { EthAddressHtmlFormatter } from './extensions/ethereum/ethAddressHtmlFormatter';
+import { PlainMustacheView } from './extensions/views/plain-mustache-view/plainMustacheView';
 import { Signers } from './interfaces/signers';
-import { EthSigner } from "./extensions/signers/ethSigner";
-import { SwarmSigner } from "./extensions/signers/swarmSigner";
+import { EthSigner } from "./extensions/ethereum/ethSigner";
+import { SwarmSigner } from "./extensions/swarm/swarmSigner";
 
 //import { SwarmDappletProvider } from './providers/swarmDappletProvider';
 
