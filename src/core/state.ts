@@ -1,12 +1,14 @@
 import { utils } from "ethers";
 
+export type TypedValue = [Uint8Array,string]
+
 // It stores incoming JSON data and statuses of transaction execution (?)
 export class State {
     // May be here is setters which call _scheduleNextRun when it changes
     // KeyValue or Hashmap<key, any, parentKey>
     // txBuilder.status.something
 
-    private _map = new Map<string, Uint8Array>();
+    private _map = new Map<string, TypedValue>();
     private _updateHandlers: (() => void)[] = [];
 
     constructor(types?: { [variable: string]: string }, data?: Uint8Array) {
@@ -22,22 +24,18 @@ export class State {
         for (let i = 0; i < decodedValues.length; i++) {
             const hex = utils.defaultAbiCoder.encode([typeNames[i]], [decodedValues[i]]);
             const buf = utils.arrayify(hex);
-            this._map.set(varNames[i], buf);
+            this._map.set(varNames[i], [buf,typeNames[i]]);
         }
     }
 
-    public get(key: string): Uint8Array | undefined {
+    public get(key: string): TypedValue | undefined {
         //ToDo: Resolve aliases authomatically
         return this._map.get(key);
     }
 
-    public set(key: string, value: Uint8Array) {
-        this._map.set(key, value);
+    public set(key: string, value: Uint8Array, type:string) {
+        this._map.set(key, [value, type]);
         this._updateHandlers.forEach(callback => callback())
-    }
-
-    public getTyped(key: string): [Uint8Array, string] {
-        throw "NOT IMPLEMENTED getType(...)"
     }
 
     public onUpdate(callback: () => void) {

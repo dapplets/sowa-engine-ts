@@ -1,7 +1,7 @@
 import { TxBuilder } from "../../interfaces/txBuilder";
 import { TypeConverter } from "../../types/typeConverter";
 import { TxTemplate } from '../../types/txTemplate';
-import { State as Storage } from '../../core/state';
+import { State as Storage, TypedValue } from '../../core/state';
 import * as ethers from "ethers";
 
 enum State { INIT, RUNNING }
@@ -39,9 +39,11 @@ export class EthTxBuilder implements TxBuilder {
         if (!varList) return ""
         
         const vars = varList.map((varname, n) => {
-            const [value, type] = this.storage.getTyped(varname)
+            const typedValue = this.storage.get(varname)
+            if (!typedValue) return undefined
+            const [value,type] = typedValue
             //ToDo: check undefined
-            return this.typeConverter(type, argTypes[n], value)
+            return typedValue && this.typeConverter(type, argTypes[n], value)
         })
         const argBytes = ethers.utils.defaultAbiCoder.encode(argTypes, vars).substring(2)
         return methodSig + argBytes

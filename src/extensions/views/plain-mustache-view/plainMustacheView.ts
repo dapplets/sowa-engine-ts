@@ -13,7 +13,7 @@ export class PlainMustacheView extends BaseView implements View {
             const mustaches = new Array(...(template.match(/{{\s*[\w\.]+\s*}}/g) || []))
             for (const mustache of mustaches) {
                 const variable = (new Array(...mustache.match(/[\w\.]+/)))[0]
-                const bin = this.state.get(variable)
+                const [bin,type] = this.state.get(variable)
                 if (!bin) continue
 
                 // ToDo: This code is chain-specific!
