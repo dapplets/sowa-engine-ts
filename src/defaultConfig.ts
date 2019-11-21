@@ -1,8 +1,8 @@
 import { ContextConfig } from "./types/contextConfig";
-import { EthTxBuilder } from "./extensions/txBuilders/ethTxBuilder";
+import { EthTxBuilder } from "./support/ethereum/ethTxBuilder";
 import { GithubDappletProvider } from './providers/githubDappletProvider';
 import { CameraFormatter } from './extensions/formatters/cameraFormatter';
-import { EthAddressHtmlFormatter } from './extensions/formatters/ethAddressHtmlFormatter';
+import { EthAddressHtmlFormatter } from './support/ethereum/ethAddressHtmlFormatter';
 import { PlainMustacheView } from './extensions/views/plainMustacheView';
 import { Signers } from './interfaces/signers';
 import { EthSigner } from "./extensions/signers/ethSigner";
