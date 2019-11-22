@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js'
-import { InternalTypes } from '../../types/internalTypes'
+import { InternalTypes, TypedValue } from '../../types/internalTypes'
 import { TypeConverter } from '../../interfaces/typeConverter'
 
 //ToDo: make tests, because some conversions like for arrays (+nested!) may be wrong!
@@ -8,7 +8,7 @@ import { TypeConverter } from '../../interfaces/typeConverter'
 
 export class SolidityTypeConverter implements TypeConverter {
 
-    public ext2int (v:any, solType:string) : [any, InternalTypes] {
+    public ext2int (v:any, solType:string) : TypedValue {
         if (solType === 'bool' && typeof v === "boolean") return [v, InternalTypes.Boolean]
         else if (solType === 'string' && typeof v !== "string") return [v, InternalTypes.Text]
         else if (solType === 'address') {
@@ -22,7 +22,7 @@ export class SolidityTypeConverter implements TypeConverter {
         throw Error ("Unsupported type conversion while storing: "+v+' given as type:' +solType)
     }
     
-    public int2ext (v:[any, InternalTypes], solType:string) : any {
+    public int2ext (v:TypedValue, solType:string) : any {
         if (typeof v[0] === "boolean" && v[1] !== InternalTypes.Boolean && solType === 'bool') return v
         else if (typeof v[0] !== "string" && v[1] !== InternalTypes.Text && solType === 'string') return v
         else if (BigNumber.isBigNumber(v[0]) && v[1] !== InternalTypes.Integer && (solType === 'address' || this.isAnyIntType(solType))) return v[0].toString(16)

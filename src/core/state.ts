@@ -1,6 +1,4 @@
-import { InternalTypes } from '../types/internalTypes'
-
-export type TypedValue = [any, InternalTypes]
+import { InternalTypes, TypedValue } from '../types/internalTypes'
 
 // It stores incoming request data and statuses of transaction execution (?)
 export class State {
@@ -42,7 +40,7 @@ export class State {
         }
     }
 
-    public get(key: string): [any, InternalTypes] | undefined {
+    public get(key: string): TypedValue | undefined {
         return this._map.get(key)
     }
 

@@ -4,3 +4,5 @@ export enum InternalTypes {
     Text = "text",
     Boolean = "bool"
 }
+
+export type TypedValue = [any, InternalTypes]
