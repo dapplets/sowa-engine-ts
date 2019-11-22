@@ -11,8 +11,8 @@ export class StateProxy {
         return data && this.typeConverter.int2ext(data,externalType)
     }
 
-    public set(key: string, value: string, externalType: string): any {
+    public set(key: string, data: any, externalType: string): any {
         // external type => internal type
-        this._state.set(key, value, InternalTypes[externalType]) //ToDo: It can not be right!
+        this._state.set(key, this.typeConverter.ext2int(data,externalType))
     }
 }

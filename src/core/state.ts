@@ -44,8 +44,8 @@ export class State {
         return this._map.get(key)
     }
 
-    public set(key: string, value: any, type: InternalTypes) {
-        this._map.set(key, [value, type])
+    public set(key: string, value: TypedValue) {
+        this._map.set(key, value)
         this._updateHandlers.forEach(callback => callback())
     }
 
