@@ -7,7 +7,7 @@ export interface View {
 
 export interface ViewConstructor {
     GLOBAL_NAME: string;
-    new (viewTemplate: ViewTemplate, state: State): View;
+    new(viewTemplate: ViewTemplate, state: State): View;
 }
 
 //BaseView incapsulates functionality common for all views

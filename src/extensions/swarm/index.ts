@@ -6,7 +6,7 @@ export class SwarmExtenstion implements Extension {
     constructor(signer: SwarmSigner) {
         SwarmTxBuilder.prototype.signer = signer;
     }
-    
+
     txBuilder = SwarmTxBuilder
     formatters = []
 }
