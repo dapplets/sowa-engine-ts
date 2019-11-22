@@ -1,0 +1,20 @@
+{
+    "aliases": {
+        "view-plain-mustache": "http://types.dapplets.org/view/plain-mustache/1.0",
+        "builder-tx-sol": "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0"
+    },
+
+    "views": [{
+        "type": "view-plain-mustache",
+        "template": "Send 0.0005 ETH to Dapplet Dev Wallet."
+    }],
+
+    "transactions": {
+        "send": {
+            "type": "builder-tx-sol",
+            "from": "&Addresses[0]",
+            "to": "0x84bf358e71F3c033d3B4F7cE2eF56A7Ff14c76A4",
+            "value": 500000000000000
+        }
+    }
+}

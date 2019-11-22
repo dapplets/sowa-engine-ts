@@ -1,0 +1,35 @@
+{
+    "aliases": {},
+
+    "variables": {
+        "data": "blob",
+        "price": "uint256"
+    },
+
+    "views": [{
+        "type": "view-plain-mustache",
+        "template": "Add the picture to the marketplace for {{price}} ETH."
+    }],
+
+    "transactions": {
+        "saveToSwarm": {
+            "type": "builder-tx-swarm",
+            "data": "{{data}}"
+        },
+        "payForMarketplace": {
+            "type": "builder-tx-otherchain",
+            "to": "0xDEADBEEF",
+            "value": 500000000000000
+        },
+        "addToMarketplace": {
+            "type": "builder-tx-sol",
+            "to": "0xccf7930d9b1fa67d101e3de18de5416dc66bd852",
+            "function": "add(uint256, uint256, uint256)",
+            "args": [
+                "saveToSwarm.hash",
+                "payForMarketplace.code",
+                "price"
+            ]
+        }
+    }
+}

@@ -8,6 +8,7 @@ export class StateProxy {
         const data = this._state.get(key)
         if (!externalType) return data
         // internal type => external type
+        // ToDo: convert BN to hex string
         return data
     }
 

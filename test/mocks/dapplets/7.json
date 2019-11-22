@@ -1,0 +1,11 @@
+{
+    "aliases": {
+        "@baseUrl": "http://dapplet.org",
+        "@baseUrl2": "@baseUrl/first",
+        "first": "@baseUrl/first",
+        "second": "@baseUrl2/second"
+    },
+    "variables": {},
+    "views": [],
+    "transactions": {}
+}
