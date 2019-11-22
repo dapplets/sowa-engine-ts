@@ -1,5 +1,3 @@
 import { DappletFrame } from "./dappletFrame";
 
-export type DappletRequest = {
-    frames: DappletFrame[]
-}
+export type DappletRequest = DappletFrame[]

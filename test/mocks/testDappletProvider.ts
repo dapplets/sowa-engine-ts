@@ -13,11 +13,11 @@ export class TestDappletProvider implements DappletProvider {
           },
 
           variables: {
-            "id": "string",
-            "text": "string",
-            "authorFullname": "string",
-            "authorUsername": "string",
-            "authorImg": "string"
+            "id": "text",
+            "text": "text",
+            "authorFullname": "text",
+            "authorUsername": "text",
+            "authorImg": "text"
           },
 
           views: [

@@ -1,10 +1,10 @@
 import { TxBuilder } from "../../interfaces/txBuilder";
 import { TypeConverter } from "../../types/typeConverter";
 import { TxTemplate } from '../../types/txTemplate';
-import { State as Storage, TypedValue } from '../../core/state';
+import { State } from '../../core/state';
 import * as ethers from "ethers";
 
-enum State { INIT, RUNNING }
+enum Status { INIT, RUNNING }
 type EthTxConfig = {
     methodSig: string | null
     argTypes: string[]
@@ -20,10 +20,10 @@ export class EthTxBuilder implements TxBuilder {
     public static readonly GLOBAL_NAME = "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0";
     
     public txConfig: any;
-    private state: State = State.INIT;
+    private status: Status = Status.INIT;
     private config: EthTxConfig
 
-    constructor(public readonly txTemplate: EthTxTemplate, public readonly storage: Storage, public readonly typeConverter: TypeConverter) {
+    constructor(public readonly txTemplate: EthTxTemplate, public readonly state: State, public readonly typeConverter: TypeConverter) {
         this.config = {
             methodSig: txTemplate.function ? ethers.utils.id(txTemplate.function).substring(0, 10) : null,
             argTypes: txTemplate.function ? txTemplate.function.match(/\((.*)\)/)![1].split(',') : [],
@@ -39,7 +39,7 @@ export class EthTxBuilder implements TxBuilder {
         if (!varList) return ""
         
         const vars = varList.map((varname, n) => {
-            const typedValue = this.storage.get(varname)
+            const typedValue = this.state.get(varname)
             if (!typedValue) return undefined
             const [value,type] = typedValue
             //ToDo: check undefined
@@ -50,7 +50,7 @@ export class EthTxBuilder implements TxBuilder {
     }
 
     public isReadyToRun(): boolean {
-        return this.state == State.INIT
+        return this.status == Status.INIT
             && !this.isWaiting()
     }
 
@@ -60,7 +60,7 @@ export class EthTxBuilder implements TxBuilder {
     }
 
     public async run(): Promise<any> {
-        this.state = State.RUNNING;
+        this.status = Status.RUNNING;
     }
 
     public on(event: string, callback: Function): void {
@@ -69,6 +69,6 @@ export class EthTxBuilder implements TxBuilder {
 
     //ToDo: refactor to EL class
     public evaluateExpression(expr: string): any {
-        return this.storage.get(expr);
+        return this.state.get(expr);
     }
 }

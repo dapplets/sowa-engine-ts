@@ -1,6 +1,4 @@
-import { utils } from "ethers";
-
-export type TypedValue = [Uint8Array,string]
+type TypedValue = [any, string]
 
 // It stores incoming JSON data and statuses of transaction execution (?)
 export class State {
@@ -11,20 +9,36 @@ export class State {
     private _map = new Map<string, TypedValue>();
     private _updateHandlers: (() => void)[] = [];
 
-    constructor(types?: { [variable: string]: string }, data?: Uint8Array) {
-        if (!types && !data) return;
-        if (!types || !data) throw Error("Types and Values are required together.");
+    constructor(variablesTemplate?: { [variable: string]: string }, values?: any[]) {
+        if (!variablesTemplate && !values) return
+        if (!variablesTemplate || !values) throw "Variables template and Values are required together."
 
-        const varNames = Object.keys(types);
-        const typeNames = Object.values(types);
+        const variables = Object.keys(variablesTemplate)
+        const types = Object.values(variablesTemplate)
+        
+        if (variables.length !== values.length) throw "The number of variables and values must be equal."
+        
+        for (let i = 0; i < variables.length; i++) {
+            const variable = variables[i],
+                  type = types[i],
+                  value = values[i]
+        
+            if (!this._getValidator(type)(value)) throw `Invalid type of ${variable}. Expected '${type}' type.`
+            
+            this._map.set(variable, [value, type])
+        }
+    }
 
-        // ToDo: This code is chain-specific!
-        const decodedValues = utils.defaultAbiCoder.decode(typeNames, data);
-
-        for (let i = 0; i < decodedValues.length; i++) {
-            const hex = utils.defaultAbiCoder.encode([typeNames[i]], [decodedValues[i]]);
-            const buf = utils.arrayify(hex);
-            this._map.set(varNames[i], [buf,typeNames[i]]);
+    private _getValidator(type: string): (value: any) => boolean {
+        // RFC 8610: Concise Data Definition Language (CDDL)
+        switch (type) {
+            case "int": return (v) => typeof v === "number"
+            case "bstr":
+            case "bytes": return (v) => { throw "TODO!" }
+            case "tstr": 
+            case "text": return (v) => typeof v === "string"
+            case "bool": return (v) => typeof v === "boolean"
+            default: return (v) => { throw "Incompatible CBOR type." }
         }
     }
 
@@ -33,7 +47,7 @@ export class State {
         return this._map.get(key);
     }
 
-    public set(key: string, value: Uint8Array, type:string) {
+    public set(key: string, value: any, type: string) {
         this._map.set(key, [value, type]);
         this._updateHandlers.forEach(callback => callback())
     }

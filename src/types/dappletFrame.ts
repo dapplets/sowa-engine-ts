@@ -1,7 +1,4 @@
-import { DappletTemplate } from './dappletTemplate';
-
-export type DappletFrame = {
-    dappletId: string;
-    dapplet?: DappletTemplate;
-    txMeta?: Uint8Array;
-}
+export type DappletFrame = [
+    string, // dappletId
+    any[]? // txMetadata
+]

@@ -5,6 +5,7 @@ import { DEFAULT_CONFIG } from "../defaultConfig";
 import { DappletTxResult } from '../interfaces/dappletTxResult';
 import { DappletTemplate } from '../types/dappletTemplate';
 import { DappletExecutable } from './dappletExecutable';
+import * as cbor from "cbor"
 
 // DappletContext (DC) is created in the moment of a wallet starting.
 // DC is Singleton class.
@@ -16,14 +17,15 @@ export class DappletContext {
         this.config = { ...DEFAULT_CONFIG, ...config };
     }
 
-    async processRequest(request: DappletRequest): Promise<DappletTxResult> {
+    async processRequest(cborBinary: Buffer): Promise<DappletTxResult> {
+        const request: DappletRequest = cbor.decode(cborBinary)
         // dapplet loading and prepare for execution
         const dapplets = await Promise.all(
-            request.frames.map(frame =>
-                this._loadDapplet(frame.dappletId)
+            request.map(frame =>
+                this._loadDapplet(frame[0]) // dappletId
                     .then(dappletTemplate => new DappletExecutable(
                         dappletTemplate,
-                        frame.txMeta || new Uint8Array(0),
+                        frame[1] || [],
                         this.config
                     ))
             )

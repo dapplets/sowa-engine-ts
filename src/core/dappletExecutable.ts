@@ -16,9 +16,9 @@ export class DappletExecutable {
     public views: View[] = [];
     public activeView: View;
 
-    constructor(template: DappletTemplate, requestData: Uint8Array, config: ContextConfig) {
+    constructor(template: DappletTemplate, txMetadata: any[], config: ContextConfig) {
         this.aliases = this._createAliasMap(template.aliases)
-        this.state = this._createState(template.variables || {}, requestData)
+        this.state = this._createState(template.variables || {}, txMetadata)
         this._loadCompatibleViews(template.views, config.views || [])
         this._createTxBuilders(template.transactions, config.builders || [], config.typeConverter!)
         this._validate();
@@ -52,8 +52,8 @@ export class DappletExecutable {
         return this.aliases
     }
 
-    private _createState(variablesDecl: VariablesDeclType, requestData: Uint8Array) {
-        return new State(variablesDecl, requestData);
+    private _createState(variablesDecl: VariablesDeclType, txMetadata: any[]) {
+        return new State(variablesDecl, txMetadata);
     }
 
     private _loadCompatibleViews(viewDecls: ViewTemplate[], viewCtors: ViewConstructor[]) {

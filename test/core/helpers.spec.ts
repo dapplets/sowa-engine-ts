@@ -18,7 +18,7 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
       transactions: {}
     };
 
-    const de = new DappletExecutable(input, new Uint8Array(), DEFAULT_CONFIG);
+    const de = new DappletExecutable(input, [], DEFAULT_CONFIG);
 
     const expected = new Map<string, string>();
     expected.set("@baseUrl", "http://dapplet.org");
