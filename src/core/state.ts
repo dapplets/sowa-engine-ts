@@ -1,6 +1,6 @@
 import { InternalTypes } from '../types/internalTypes'
 
-// It stores incoming JSON data and statuses of transaction execution (?)
+// It stores incoming request data and statuses of transaction execution (?)
 export class State {
     // May be here is setters which call _scheduleNextRun when it changes
     // KeyValue or Hashmap<key, any, parentKey>
@@ -41,7 +41,6 @@ export class State {
     }
 
     public get(key: string): [any, InternalTypes] | undefined {
-        //ToDo: Resolve aliases authomatically
         return this._map.get(key)
     }
 
