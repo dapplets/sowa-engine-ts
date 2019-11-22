@@ -6,8 +6,8 @@ export interface TxBuilder {
     isReadyToRun(): boolean
     isWaiting(): boolean
     prepareTxPayload(): any
-    run(): Promise<any>; // async
-    on(event: string, callback: Function): void; // for running of new state machine
+    run(): Promise<any> // async
+    on(event: string, callback: Function): void // for running of new state machine
 }
 
 export interface TxBuilderConstructor {

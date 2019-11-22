@@ -1,5 +1,5 @@
-import { DappletTemplate } from "../types/dappletTemplate";
+import { DappletTemplate } from "../types/dappletTemplate"
 
 export interface DappletProvider {
-    loadDapplet(id: string): Promise<DappletTemplate>; // async
+    loadDapplet(id: string): Promise<DappletTemplate> // async
 }

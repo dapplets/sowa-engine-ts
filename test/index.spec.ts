@@ -1,11 +1,11 @@
-import 'mocha';
-import { expect } from "chai";
+import 'mocha'
+import { expect } from "chai"
 import * as cbor from "cbor"
 
-import { DappletContext } from "../src/index";
-import { TestDappletProvider } from "./mocks/testDappletProvider";
-import { EthereumExtenstion } from '../src/extensions/ethereum';
-import { WalletEthSigner } from './mocks/walletEthSigner';
+import { DappletContext } from "../src/index"
+import { TestDappletProvider } from "./mocks/testDappletProvider"
+import { EthereumExtenstion } from '../src/extensions/ethereum'
+import { WalletEthSigner } from './mocks/walletEthSigner'
 
 describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', () => {
   it('send dapplet request', async () => {
@@ -24,11 +24,11 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
     const dappletContext = new DappletContext({
       providers: [new TestDappletProvider()],
       extensions: [new EthereumExtenstion(new WalletEthSigner())]
-    });
-    const result = await dappletContext.processRequest(binary);
+    })
+    const result = await dappletContext.processRequest(binary)
 
-    console.log("result", result);
+    console.log("result", result)
 
-    expect(result).to.be.not.null.not.undefined;
+    expect(result).to.be.not.null.not.undefined
   })
 })

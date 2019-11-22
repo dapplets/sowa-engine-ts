@@ -1,9 +1,9 @@
-import { TxBuilder } from "../../interfaces/txBuilder";
-import { TxTemplate } from '../../types/txTemplate';
-import { State } from '../../core/state';
-import * as ethers from "ethers";
-import { EthSigner } from './ethSigner';
-import { StateProxy } from './stateProxy';
+import { TxBuilder } from "../../interfaces/txBuilder"
+import { TxTemplate } from '../../types/txTemplate'
+import { State } from '../../core/state'
+import * as ethers from "ethers"
+import { EthSigner } from './ethSigner'
+import { StateProxy } from './stateProxy'
 
 enum Status { INIT, RUNNING }
 type EthTxConfig = {
@@ -18,7 +18,7 @@ type EthTxTemplate = TxTemplate & {
 }
 
 export class EthTxBuilder implements TxBuilder {
-    public static readonly GLOBAL_NAME = "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0";
+    public static readonly GLOBAL_NAME = "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0"
 
     public txConfig: any
     private status: Status = Status.INIT
@@ -62,7 +62,7 @@ export class EthTxBuilder implements TxBuilder {
     }
 
     public async run(): Promise<any> {
-        this.status = Status.RUNNING;
+        this.status = Status.RUNNING
     }
 
     public on(event: string, callback: Function): void {
@@ -71,6 +71,6 @@ export class EthTxBuilder implements TxBuilder {
 
     //ToDo: refactor to EL class
     public evaluateExpression(expr: string): any {
-        return this.state.get(expr);
+        return this.state.get(expr)
     }
 }

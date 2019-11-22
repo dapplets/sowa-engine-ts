@@ -1,4 +1,4 @@
-import { View, BaseView } from "../../../interfaces/view";
+import { View, BaseView } from "../../../interfaces/view"
 
 export class PlainMustacheView extends BaseView implements View {
     public static readonly GLOBAL_NAME = "http://types.dapplets.org/view/plain-mustache/1.0"

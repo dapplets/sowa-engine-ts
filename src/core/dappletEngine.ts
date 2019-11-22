@@ -1,10 +1,10 @@
-import { DappletContext } from './dappletContext';
-import { DappletExecutable } from './dappletExecutable';
+import { DappletContext } from './dappletContext'
+import { DappletExecutable } from './dappletExecutable'
 const MIN_WAIT_FOR_NEXT_RUN_MLS = 1000
 
 export class DappletEngine {
 
-    needReEvaluate: boolean = false;
+    needReEvaluate: boolean = false
 
     constructor(private _frameExecutables: DappletExecutable[], private _context: DappletContext) {
     }
@@ -23,15 +23,15 @@ export class DappletEngine {
 
     public onApproved() {
         //ToDo: do we need notifications from state or we can just recalculate all "when"?
-        this._frameExecutables.forEach(f => f.state.onUpdate(() => this.needReEvaluate = true))
-            ; (async () => run())()
+        this._frameExecutables.forEach(f => f.state.onUpdate(() => this.needReEvaluate = true));
+        (async () => run())()
     }
 
     private async run() {
-        let n = 0;
+        let n = 0
         do {
             if (this.needReEvaluate) {
-                this.needReEvaluate = false;
+                this.needReEvaluate = false
                 //prepare transactions
                 const framePayloads = this._frameExecutables.map(f => f.prepare())
                 //pre-send processing and checks (like multisigs)
@@ -44,7 +44,7 @@ export class DappletEngine {
                 //send all transactions
                 // framePayloads.forEach(framePayload => {
                 //     framePayload.forEach(([builderName, data]) => {
-                //         ++n;
+                //         ++n
                 //         this._context.config.signers?.get(builderName)!.signAndSend(data)
                 //             .then(() => --n)
                 //     })
@@ -55,6 +55,6 @@ export class DappletEngine {
     }
 
     private sleep(millis: number) {
-        return new Promise(resolve => setTimeout(resolve, millis));
+        return new Promise(resolve => setTimeout(resolve, millis))
     }
 }

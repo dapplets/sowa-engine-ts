@@ -1,6 +1,6 @@
 export interface Signer { // ToDo: Think about how to rename it
-    signAndSend(payload: any): Promise<void>;
-    GLOBAL_NAME: string;
+    signAndSend(payload: any): Promise<void>
+    GLOBAL_NAME: string
 }
 
 export class Signers {

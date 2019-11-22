@@ -1,5 +1,5 @@
-import { DappletProvider } from '../../src/interfaces/dappletProvider';
-import { DappletTemplate } from '../../src/types/dappletTemplate';
+import { DappletProvider } from '../../src/interfaces/dappletProvider'
+import { DappletTemplate } from '../../src/types/dappletTemplate'
 
 export class TestDappletProvider implements DappletProvider {
   async loadDapplet(id: string): Promise<DappletTemplate> {
@@ -40,7 +40,7 @@ export class TestDappletProvider implements DappletProvider {
               args: ["id:bigNumberify", "text:toUtf8Bytes:sha256"]
             }
           }
-        };
+        }
       case "5":
         return {
           "aliases": {
@@ -63,7 +63,7 @@ export class TestDappletProvider implements DappletProvider {
               "value": 500000000000000
             }
           }
-        };
+        }
       case "6":
         // EXAMPLE FOR DIP
         return {
@@ -105,7 +105,7 @@ export class TestDappletProvider implements DappletProvider {
           }
         }
       default:
-        throw Error("There is no template with such id.");
+        throw Error("There is no template with such id.")
     }
   }
 }

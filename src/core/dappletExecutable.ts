@@ -1,29 +1,29 @@
-import { DappletTemplate } from '../types/dappletTemplate';
-import { TxTemplate } from '../types/txTemplate';
-import { ContextConfig } from '../types/contextConfig';
+import { DappletTemplate } from '../types/dappletTemplate'
+import { TxTemplate } from '../types/txTemplate'
+import { ContextConfig } from '../types/contextConfig'
 import { ViewConstructor, View } from "../interfaces/view"
-import { ViewTemplate } from '../types/viewTemplate';
+import { ViewTemplate } from '../types/viewTemplate'
 import { TxBuilder } from "../interfaces/txBuilder"
-import { State } from './state';
-import { Extension } from '../interfaces/extension';
+import { State } from './state'
+import { Extension } from '../interfaces/extension'
 
 type VariablesDeclType = { [alias: string]: string }
 
 export class DappletExecutable {
-    public aliases = new Map<string, string>();
-    public state: State;
-    public transactions: { [key: string]: TxBuilder; } = {};
-    public views: View[] = [];
-    public activeView: View;
+    public aliases = new Map<string, string>()
+    public state: State
+    public transactions: { [key: string]: TxBuilder } = {}
+    public views: View[] = []
+    public activeView: View
 
     constructor(template: DappletTemplate, txMetadata: any[], config: ContextConfig) {
         this.aliases = this._createAliasMap(template.aliases)
         this.state = this._createState(template.variables || {}, txMetadata)
         this._loadCompatibleViews(template.views, config.views || [])
         this._createTxBuilders(template.transactions, config.extensions || [])
-        this._validate();
+        this._validate()
 
-        this.activeView = this.views[0]; //ToDo: MayBe implement another view selection strategy 
+        this.activeView = this.views[0] //ToDo: MayBe implement another view selection strategy 
     }
 
     public prepare(): [string, any][] {
@@ -31,7 +31,7 @@ export class DappletExecutable {
         for (let type in this.transactions) {
             //ToDo: error! two builders with the same type will not work!!!
             //ToDo: use name/id ?
-            const builder = this.transactions[type];
+            const builder = this.transactions[type]
             if (builder.isReadyToRun()) {
                 data.push([type, builder.prepareTxPayload()])
             }
@@ -46,14 +46,14 @@ export class DappletExecutable {
         }
 
         for (const key in aliasMap) {
-            this.aliases.set(key, replacer(key, aliasMap));
+            this.aliases.set(key, replacer(key, aliasMap))
         }
 
         return this.aliases
     }
 
     private _createState(variablesDecl: VariablesDeclType, txMetadata: any[]) {
-        return new State(variablesDecl, txMetadata);
+        return new State(variablesDecl, txMetadata)
     }
 
     private _loadCompatibleViews(viewDecls: ViewTemplate[], viewCtors: ViewConstructor[]) {
@@ -70,7 +70,7 @@ export class DappletExecutable {
         }
     }
 
-    private _createTxBuilders(txDecls: { [key: string]: TxTemplate; }, extensions: Extension[]) {
+    private _createTxBuilders(txDecls: { [key: string]: TxTemplate }, extensions: Extension[]) {
         for (const txName in txDecls) {
             const globalName = this.aliases.get(txDecls[txName].type)
             if (!globalName) throw Error(`Alias for ${txDecls[txName].type} is not defined in usings.`)
@@ -81,6 +81,6 @@ export class DappletExecutable {
     }
 
     private _validate() {
-        //if (this.views.length === 0) throw Error("There aren't any compatible views.");
+        //if (this.views.length === 0) throw Error("There aren't any compatible views.")
     }
 }

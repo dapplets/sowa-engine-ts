@@ -1,4 +1,4 @@
-import { InternalTypes } from '../types/internalTypes';
+import { InternalTypes } from '../types/internalTypes'
 
 // It stores incoming JSON data and statuses of transaction execution (?)
 export class State {
@@ -6,8 +6,8 @@ export class State {
     // KeyValue or Hashmap<key, any, parentKey>
     // txBuilder.status.something
 
-    private _map = new Map<string, [any, InternalTypes]>();
-    private _updateHandlers: (() => void)[] = [];
+    private _map = new Map<string, [any, InternalTypes]>()
+    private _updateHandlers: (() => void)[] = []
 
     constructor(variablesTemplate?: { [variable: string]: string }, values?: any[]) {
         if (!variablesTemplate && !values) return
@@ -42,15 +42,15 @@ export class State {
 
     public get(key: string): [any, InternalTypes] | undefined {
         //ToDo: Resolve aliases authomatically
-        return this._map.get(key);
+        return this._map.get(key)
     }
 
     public set(key: string, value: any, type: InternalTypes) {
-        this._map.set(key, [value, type]);
+        this._map.set(key, [value, type])
         this._updateHandlers.forEach(callback => callback())
     }
 
     public onUpdate(callback: () => void) {
-        this._updateHandlers.push(callback);
+        this._updateHandlers.push(callback)
     }
 }
