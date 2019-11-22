@@ -1,9 +1,11 @@
 import 'mocha';
 import { expect } from "chai";
+import * as cbor from "cbor"
+
 import { DappletContext } from "../src/index";
 import { TestDappletProvider } from "./mocks/testDappletProvider";
-import { utils } from "ethers";
-import * as cbor from "cbor"
+import { EthereumExtenstion } from '../src/extensions/ethereum';
+import { WalletEthSigner } from './mocks/walletEthSigner';
 
 describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', () => {
   it('send dapplet request', async () => {
@@ -20,7 +22,8 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
     const binary = cbor.encode(DAPPLET_REQUEST)
 
     const dappletContext = new DappletContext({
-      providers: [new TestDappletProvider()]
+      providers: [new TestDappletProvider()],
+      extensions: [new EthereumExtenstion(new WalletEthSigner())]
     });
     const result = await dappletContext.processRequest(binary);
 

@@ -1,6 +1,5 @@
-import { TxTemplate } from '../types/txTemplate';
-import { State } from '../core/state';
-import { TypeConverter } from '../types/typeConverter';
+import { TxTemplate } from '../types/txTemplate'
+import { State } from '../core/state'
 
 export interface TxBuilder {
     txConfig: any
@@ -13,5 +12,5 @@ export interface TxBuilder {
 
 export interface TxBuilderConstructor {
     GLOBAL_NAME: string
-    new (txTemplate: TxTemplate, state: State, typeConverter: TypeConverter): TxBuilder
+    new (txTemplate: TxTemplate, state: State): TxBuilder
 }

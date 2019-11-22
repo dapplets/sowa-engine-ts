@@ -49,6 +49,6 @@ export class DappletContext {
     }
 
     async loadResource(id: string): Promise<ArrayBuffer> {
-        throw new Error("NOT IMPLEMENTED");
+        throw Error("NOT IMPLEMENTED");
     }
 }

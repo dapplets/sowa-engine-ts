@@ -1,1 +1,0 @@
-export type TypeConverter = (fromType:string, toType: string, value: any) => any;

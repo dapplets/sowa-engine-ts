@@ -105,7 +105,7 @@ export class TestDappletProvider implements DappletProvider {
           }
         }
       default:
-        throw new Error("There is no template with such id.");
+        throw Error("There is no template with such id.");
     }
   }
 }

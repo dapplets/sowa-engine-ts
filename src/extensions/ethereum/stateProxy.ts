@@ -1,8 +1,9 @@
 import { TxBuilder } from "../../interfaces/txBuilder";
-import { TypeConverter } from "../../types/typeConverter";
 import { TxTemplate } from '../../types/txTemplate';
 import { State } from '../../core/state';
 import * as ethers from "ethers";
+import { EthSigner } from './ethSigner';
+import { StateProxy } from './ethTypeConverter';
 
 enum Status { INIT, RUNNING }
 type EthTxConfig = {
@@ -18,16 +19,23 @@ type EthTxTemplate = TxTemplate & {
 
 export class EthTxBuilder implements TxBuilder {
     public static readonly GLOBAL_NAME = "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0";
-    
-    public txConfig: any;
-    private status: Status = Status.INIT;
-    private config: EthTxConfig
 
-    constructor(public readonly txTemplate: EthTxTemplate, public readonly state: State, public readonly typeConverter: TypeConverter) {
+    public txConfig: any
+    private status: Status = Status.INIT
+    private config: EthTxConfig
+    public signer?: EthSigner
+    public state: StateProxy
+
+    constructor(public readonly txTemplate: EthTxTemplate, state: State) {
+        this.state = new StateProxy(state)
         this.config = {
             methodSig: txTemplate.function ? ethers.utils.id(txTemplate.function).substring(0, 10) : null,
             argTypes: txTemplate.function ? txTemplate.function.match(/\((.*)\)/)![1].split(',') : [],
             varList: txTemplate.args || [],
+        }
+
+        if (this.config.varList.length !== this.config.argTypes.length) {
+            throw Error("The number of arguments and values must be equal.")
         }
     }
 
@@ -37,15 +45,9 @@ export class EthTxBuilder implements TxBuilder {
     public prepareTxPayload(): string {
         const { varList, argTypes, methodSig } = this.config
         if (!varList) return ""
-        
-        const vars = varList.map((varname, n) => {
-            const typedValue = this.state.get(varname)
-            if (!typedValue) return undefined
-            const [value,type] = typedValue
-            //ToDo: check undefined
-            return typedValue && this.typeConverter(type, argTypes[n], value)
-        })
-        const argBytes = ethers.utils.defaultAbiCoder.encode(argTypes, vars).substring(2)
+
+        const values = varList.map((varname, n) => this.state.get(varname, argTypes[n]))
+        const argBytes = ethers.utils.defaultAbiCoder.encode(argTypes, values).substring(2)
         return methodSig + argBytes
     }
 

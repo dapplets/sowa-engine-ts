@@ -3,9 +3,9 @@ import { TxTemplate } from '../types/txTemplate';
 import { ContextConfig } from '../types/contextConfig';
 import { ViewConstructor, View } from "../interfaces/view"
 import { ViewTemplate } from '../types/viewTemplate';
-import { TxBuilderConstructor, TxBuilder } from "../interfaces/txBuilder"
+import { TxBuilder } from "../interfaces/txBuilder"
 import { State } from './state';
-import { TypeConverter } from 'src/types/typeConverter';
+import { Extension } from '../interfaces/extension';
 
 type VariablesDeclType = { [alias: string]: string }
 
@@ -20,20 +20,20 @@ export class DappletExecutable {
         this.aliases = this._createAliasMap(template.aliases)
         this.state = this._createState(template.variables || {}, txMetadata)
         this._loadCompatibleViews(template.views, config.views || [])
-        this._createTxBuilders(template.transactions, config.builders || [], config.typeConverter!)
+        this._createTxBuilders(template.transactions, config.extensions || [])
         this._validate();
 
         this.activeView = this.views[0]; //ToDo: MayBe implement another view selection strategy 
     }
 
-    public prepare(): [string,any][] {
-        const data:[string,any][] = []
-        for(let type in this.transactions){
+    public prepare(): [string, any][] {
+        const data: [string, any][] = []
+        for (let type in this.transactions) {
             //ToDo: error! two builders with the same type will not work!!!
             //ToDo: use name/id ?
             const builder = this.transactions[type];
             if (builder.isReadyToRun()) {
-                data.push([type,builder.prepareTxPayload()])
+                data.push([type, builder.prepareTxPayload()])
             }
         }
         return data
@@ -70,13 +70,13 @@ export class DappletExecutable {
         }
     }
 
-    private _createTxBuilders(txDecls: { [key: string]: TxTemplate; }, builderCtors: TxBuilderConstructor[], typeConverter: TypeConverter) {
+    private _createTxBuilders(txDecls: { [key: string]: TxTemplate; }, extensions: Extension[]) {
         for (const txName in txDecls) {
             const globalName = this.aliases.get(txDecls[txName].type)
             if (!globalName) throw Error(`Alias for ${txDecls[txName].type} is not defined in usings.`)
-            const ctor = builderCtors.find(b => b.GLOBAL_NAME === globalName)
+            const ctor = extensions.map(e => e.txBuilder).find(b => b.GLOBAL_NAME === globalName)
             if (!ctor) throw Error(`TxBuilder "${globalName}" is not compatible.`)
-            this.transactions[txName] = new ctor(txDecls[txName], this.state, typeConverter)
+            this.transactions[txName] = new ctor(txDecls[txName], this.state)
         }
     }
 
