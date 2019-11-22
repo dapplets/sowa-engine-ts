@@ -1,3 +1,5 @@
+import { BigNumber } from 'bignumber.js'
+
 export enum InternalTypes {
     Integer = "int",
     Bytes = "bytes",
@@ -5,4 +7,6 @@ export enum InternalTypes {
     Boolean = "bool"
 }
 
-export type TypedValue = [any, InternalTypes]
+type CborTypes = BigNumber | number | Uint8Array | boolean
+
+export type TypedValue = [CborTypes | CborTypes[], InternalTypes]

@@ -12,7 +12,8 @@ export class PlainMustacheView extends BaseView implements View {
                 const variable = (new Array(...mustache.match(/[\w\.]+/)))[0]
                 const [value, type] = this.state.get(variable)
                 if (!value) continue
-                template = template.replace(mustache, value)
+                //ToDo: 'value.toString()' - is a nasty hack! will be fixed. 
+                template = template.replace(mustache, value.toString())
             }
         }
 
