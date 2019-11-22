@@ -1,19 +1,18 @@
 import { State } from '../../core/state'
 import { InternalTypes } from '../../types/internalTypes'
-
+import { TypeConverter } from '../../interfaces/typeConverter'
+    
 export class StateProxy {
-    constructor(private _state: State) { }
+    constructor(private _state: State, private typeConverter:TypeConverter) { }
 
     public get(key: string, externalType?: string): any {
         const data = this._state.get(key)
         if (!externalType) return data
-        // internal type => external type
-        // ToDo: convert BN to hex string
-        return data
+        return data && this.typeConverter.int2ext(data,externalType)
     }
 
     public set(key: string, value: string, externalType: string): any {
         // external type => internal type
-        this._state.set(key, value, InternalTypes[externalType])
+        this._state.set(key, value, InternalTypes[externalType]) //ToDo: It can not be right!
     }
 }

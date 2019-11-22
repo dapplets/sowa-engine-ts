@@ -4,6 +4,7 @@ import { State } from '../../core/state'
 import * as ethers from "ethers"
 import { EthSigner } from './ethSigner'
 import { StateProxy } from './stateProxy'
+import { SolidityTypeConverter } from './solidityTypeConverter'
 
 enum Status { INIT, RUNNING }
 type EthTxConfig = {
@@ -27,7 +28,7 @@ export class EthTxBuilder implements TxBuilder {
     public state: StateProxy
 
     constructor(public readonly txTemplate: EthTxTemplate, state: State) {
-        this.state = new StateProxy(state)
+        this.state = new StateProxy(state, new SolidityTypeConverter())
         this.config = {
             methodSig: txTemplate.function ? ethers.utils.id(txTemplate.function).substring(0, 10) : null,
             argTypes: txTemplate.function ? txTemplate.function.match(/\((.*)\)/)![1].split(',') : [],

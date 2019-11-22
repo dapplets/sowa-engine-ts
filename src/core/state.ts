@@ -1,12 +1,14 @@
 import { InternalTypes } from '../types/internalTypes'
 
+export type TypedValue = [any, InternalTypes]
+
 // It stores incoming request data and statuses of transaction execution (?)
 export class State {
     // May be here is setters which call _scheduleNextRun when it changes
     // KeyValue or Hashmap<key, any, parentKey>
     // txBuilder.status.something
 
-    private _map = new Map<string, [any, InternalTypes]>()
+    private _map = new Map<string, TypedValue>()
     private _updateHandlers: (() => void)[] = []
 
     constructor(variablesTemplate?: { [variable: string]: string }, values?: any[]) {

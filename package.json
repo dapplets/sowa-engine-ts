@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@types/cbor": "^2.0.0",
+    "bignumber.js": "^9.0.0",
     "cbor": "^5.0.1",
     "ethers": "^4.0.39",
     "node-fetch": "^2.6.0"
