@@ -1,13 +1,12 @@
 import { Extension } from '../../interfaces/extension'
 import { SolidityBuilder } from './solidityBuilder'
-import { EthTxBuilder } from './ethTxBuilder'
 import { EthAddressHtmlFormatter } from './ethAddressHtmlFormatter'
 import { EthSigner } from './ethSigner'
-import { TxTemplate } from '../../types/txTemplate'
+import { ViperBuilder } from './viperBuilder'
 
 export class EthereumExtension implements Extension {
     constructor(public signer: EthSigner) {}
 
-    txBuilders = [SolidityBuilder]
+    txBuilders = [SolidityBuilder, ViperBuilder]
     formatters = [EthAddressHtmlFormatter]
 }

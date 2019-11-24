@@ -15,8 +15,8 @@ export class SolidityTypeConverter implements TypeConverter {
             if (BigNumber.isBigNumber(v)) return [v, InternalTypes.Integer]
             else if (typeof v === 'string') return [new BigNumber(v), InternalTypes.Integer]       //ToDo: Unsure! check CBOR!
         } else if (this.isAnyIntType(solType)) {
-            if (typeof v === 'number')  return [v, InternalTypes.Bytes]
-            else if (BigNumber.isBigNumber(v)) return [v, InternalTypes.Bytes]                      //ToDo: Unsure! check CBOR!
+            if (typeof v === 'number')  return [v, InternalTypes.Integer]
+            else if (BigNumber.isBigNumber(v)) return [v, InternalTypes.Integer]                      //ToDo: Unsure! check CBOR!
         } else if (this.isAnyBytesType(solType) && v instanceof Array) return [v, InternalTypes.Bytes]
         
         throw Error ("Unsupported type conversion while storing: "+v+' given as type:' +solType)
