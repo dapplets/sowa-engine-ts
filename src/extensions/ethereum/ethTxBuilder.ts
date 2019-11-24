@@ -1,10 +1,8 @@
 import { TxBuilder } from "../../interfaces/txBuilder"
 import { TxTemplate } from '../../types/txTemplate'
-import { State } from '../../core/state'
 import * as ethers from "ethers"
-import { EthSigner } from './ethSigner'
 import { StateProxy } from './stateProxy'
-import { SolidityTypeConverter } from './solidityTypeConverter'
+import { Signer } from "../../interfaces/signer"
 
 enum Status { INIT, RUNNING }
 type EthTxConfig = {
@@ -13,22 +11,17 @@ type EthTxConfig = {
     varList: string[]
 }
 
-type EthTxTemplate = TxTemplate & {
+export type EthTxTemplate = TxTemplate & {
     function?: string // It's nullable because simple coin transfering doesn't require declaration of function 
     args?: string[]
 }
 
-export class EthTxBuilder implements TxBuilder {
-    public static readonly GLOBAL_NAME = "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0"
-
+export abstract class EthTxBuilder implements TxBuilder {
     public txConfig: any
     private status: Status = Status.INIT
     private config: EthTxConfig
-    public signer?: EthSigner
-    public state: StateProxy
 
-    constructor(public readonly txTemplate: EthTxTemplate, state: State) {
-        this.state = new StateProxy(state, new SolidityTypeConverter())
+    constructor(public readonly txTemplate: EthTxTemplate, protected state: StateProxy, public readonly signer: Signer) {
         this.config = {
             methodSig: txTemplate.function ? ethers.utils.id(txTemplate.function).substring(0, 10) : null,
             argTypes: txTemplate.function ? txTemplate.function.match(/\((.*)\)/)![1].split(',') : [],

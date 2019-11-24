@@ -1,3 +1,4 @@
-export interface SwarmSigner {
-    save(data: any): string
+import { Signer } from 'src/interfaces/signer';
+export interface SwarmSigner extends Signer {
+    signAndSend(payload: any): Promise<void>
 }

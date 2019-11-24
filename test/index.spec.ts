@@ -4,7 +4,7 @@ import * as cbor from "cbor"
 
 import { DappletContext } from "../src/index"
 import { TestDappletProvider } from "./mocks/testDappletProvider"
-import { EthereumExtenstion } from '../src/extensions/ethereum'
+import { EthereumExtension } from '../src/extensions/ethereum'
 import { WalletEthSigner } from './mocks/walletEthSigner'
 
 describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', () => {
@@ -23,7 +23,7 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
 
     const dappletContext = new DappletContext({
       providers: [new TestDappletProvider()],
-      extensions: [new EthereumExtenstion(new WalletEthSigner())]
+      extensions: [new EthereumExtension(new WalletEthSigner())]
     })
     const result = await dappletContext.processRequest(binary)
 

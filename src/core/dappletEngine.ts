@@ -42,13 +42,12 @@ export class DappletEngine {
                 //3. re-work payloads of the dependend frame
 
                 //send all transactions
-                // framePayloads.forEach(framePayload => {
-                //     framePayload.forEach(([builderName, data]) => {
-                //         ++n
-                //         this._context.config.signers?.get(builderName)!.signAndSend(data)
-                //             .then(() => --n)
-                //     })
-                // })
+                 framePayloads.forEach(framePayload => {
+                     framePayload.forEach(([signer, data]) => {
+                         ++n
+                         signer.signAndSend(data).then(() => --n)
+                     })
+                 })
             }
             await this.sleep(MIN_WAIT_FOR_NEXT_RUN_MLS)
         } while (n > 0) //ToDo: check it: loop finishes if some tx are waiting for unrealistic conditions. Correct?

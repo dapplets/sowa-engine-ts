@@ -3,9 +3,10 @@ import { TxTemplate } from '../types/txTemplate'
 import { ContextConfig } from '../types/contextConfig'
 import { ViewConstructor, View } from "../interfaces/view"
 import { ViewTemplate } from '../types/viewTemplate'
-import { TxBuilder } from "../interfaces/txBuilder"
+import { TxBuilder, TxBuilderConstructor } from "../interfaces/txBuilder"
 import { State } from './state'
 import { Extension } from '../interfaces/extension'
+import { Signer } from 'src/interfaces/signer'
 
 type VariablesDeclType = { [alias: string]: string }
 
@@ -26,14 +27,14 @@ export class DappletExecutable {
         this.activeView = this.views[0] //ToDo: MayBe implement another view selection strategy 
     }
 
-    public prepare(): [string, any][] {
-        const data: [string, any][] = []
+    public prepare(): [Signer, any][] {
+        const data: [Signer, any][] = []
         for (let type in this.transactions) {
             //ToDo: error! two builders with the same type will not work!!!
             //ToDo: use name/id ?
             const builder = this.transactions[type]
             if (builder.isReadyToRun()) {
-                data.push([type, builder.prepareTxPayload()])
+                data.push([builder.signer, builder.prepareTxPayload()])
             }
         }
         return data
@@ -74,9 +75,12 @@ export class DappletExecutable {
         for (const txName in txDecls) {
             const globalName = this.aliases.get(txDecls[txName].type)
             if (!globalName) throw Error(`Alias for ${txDecls[txName].type} is not defined in usings.`)
-            const ctor = extensions.map(e => e.txBuilder).find(b => b.GLOBAL_NAME === globalName)
-            if (!ctor) throw Error(`TxBuilder "${globalName}" is not compatible.`)
-            this.transactions[txName] = new ctor(txDecls[txName], this.state)
+            const builder = extensions.map(e => { 
+                const ctor = e.txBuilders.find(b => b.GLOBAL_NAME == globalName)
+                return ctor && new ctor(txDecls[txName], this.state, e.signer)
+            }).find(b=>b)
+            if (!builder) throw Error(`TxBuilder "${globalName}" is not supported.`)
+            this.transactions[txName] = builder
         }
     }
 

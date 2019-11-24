@@ -8,11 +8,11 @@ type SwarmTxTemplate = TxTemplate & {
 }
 
 export class SwarmTxBuilder implements TxBuilder {
-    public static readonly GLOBAL_NAME = "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0"
-    public signer?: SwarmSigner
+    public static readonly GLOBAL_NAME = "http://types.dapplets.org/swarm/1.0"
+    
     public txConfig: any
 
-    constructor(public readonly txTemplate: SwarmTxTemplate, public readonly state: State) { }
+    constructor(public readonly txTemplate: SwarmTxTemplate, public readonly state: State, public signer: SwarmSigner) { }
 
     public isReadyToRun(): boolean {
         throw Error("Method not implemented.")
