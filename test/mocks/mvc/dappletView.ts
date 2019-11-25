@@ -1,7 +1,10 @@
 import { View, Glyph, GlyphType } from "../../../src/interfaces/view"
 
 export class DappletView {
-    constructor() { }
+    constructor() { 
+        // createElement('div')
+        // ...
+    }
 
     public displayGlyphs(glyphs: Glyph[][]) {
         let i = 0
@@ -12,10 +15,11 @@ export class DappletView {
                 else if (glyph.type === GlyphType.EXPR) frame += glyph.value()
             }
             console.log(`FRAME #${i++}`, frame)
+            // update html
         }
     }
 
     bindApproveHandler(handler: Function) {
-        // addEventListener('click', handler)
+        // button.addEventListener('click', handler)
     }
 }
