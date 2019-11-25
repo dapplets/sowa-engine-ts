@@ -1,7 +1,16 @@
 import { ViewTemplate } from '../types/viewTemplate'
 import { State } from '../core/state'
 
+export type Glyph{
+    type: GlyphType;
+    value:any;
+}
+
+export enum GlyphType {TEXT, EXPR}
+
 export interface View {
+    glyphs: Glyph[];
+    parse(): void
     render(): void
 }
 
@@ -18,6 +27,8 @@ export abstract class BaseView implements View {
     constructor(protected viewTemplate: ViewTemplate, protected state: State) {
         state.onUpdate(() => this.render())
     }
-
+    
+    abstract glyphs: Glyph[];
+    abstract parse():void
     abstract render(): void
 }
