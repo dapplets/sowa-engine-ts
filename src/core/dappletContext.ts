@@ -17,7 +17,7 @@ export class DappletContext {
         this.config = { ...DEFAULT_CONFIG, ...config }
     }
 
-    async processRequest(cborBinary: Buffer): Promise<DappletTxResult> {
+    async processRequest(cborBinary: Buffer): Promise<DappletEngine> {
         const request: DappletRequest = cbor.decode(cborBinary)
         // dapplet loading and prepare for execution
         const dapplets = await Promise.all(
@@ -32,10 +32,7 @@ export class DappletContext {
         )
 
         const engine = new DappletEngine(dapplets, this)
-        engine.start()
-
-        //const activity = new DappletActivity(request, this)
-        return {}
+        return engine
     }
 
     private async _loadDapplet(dappletId: string): Promise<DappletTemplate> {
