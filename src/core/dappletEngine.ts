@@ -4,7 +4,7 @@ const MIN_WAIT_FOR_NEXT_RUN_MLS = 1000
 
 export class DappletEngine {
 
-    needReEvaluate: boolean = false
+    needReEvaluate: boolean = true
 
     constructor(public readonly frameExecutables: DappletExecutable[], private _context: DappletContext) {
     }
@@ -21,10 +21,10 @@ export class DappletEngine {
         }
     }
 
-    public approve() {
+    public async approve() {
         //ToDo: do we need notifications from state or we can just recalculate all "when"?
         this.frameExecutables.forEach(f => f.state.onUpdate(() => this.needReEvaluate = true));
-        (async () => run())()
+        await this.run()
     }
 
     private async run() {
@@ -42,12 +42,12 @@ export class DappletEngine {
                 //3. re-work payloads of the dependend frame
 
                 //send all transactions
-                 framePayloads.forEach(framePayload => {
-                     framePayload.forEach(([signer, data]) => {
-                         ++n
-                         signer.signAndSend(data).then(() => --n)
-                     })
-                 })
+                framePayloads.forEach(framePayload => {
+                    framePayload.forEach(([signer, data]) => {
+                        ++n
+                        signer.signAndSend(data).then(() => --n)
+                    })
+                })
             }
             await this.sleep(MIN_WAIT_FOR_NEXT_RUN_MLS)
         } while (n > 0) //ToDo: check it: loop finishes if some tx are waiting for unrealistic conditions. Correct?

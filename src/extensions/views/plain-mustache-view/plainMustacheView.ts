@@ -21,11 +21,12 @@ export class PlainMustacheView implements View { //  extends BaseView
             let p0 = 0
             let evaluateExpr = (expr: string) => this.state.get(expr)
             let m: RegExpExecArray | null;
-            while ((m = r.exec(template)) != null) {
+            while ((m = r.exec(template)) !== null) {
                 let p1 = r.lastIndex - m[0].length
                 let text = template.substr(p0, p1 - p0)
                 glyphs.push({ type: GlyphType.TEXT, value: text })
-                glyphs.push({ type: GlyphType.EXPR, value: () => evaluateExpr(m![1]) })
+                const expr = m![1]
+                glyphs.push({ type: GlyphType.EXPR, value: () => evaluateExpr(expr) })
                 p0 = r.lastIndex
             }
             glyphs.push({ type: GlyphType.TEXT, value: template.substr(p0) })

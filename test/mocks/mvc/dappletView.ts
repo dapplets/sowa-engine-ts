@@ -12,7 +12,7 @@ export class DappletView {
             let frame = ""
             for (const glyph of frameGlyphs) {
                 if (glyph.type === GlyphType.TEXT) frame += glyph.value
-                else if (glyph.type === GlyphType.EXPR) frame += glyph.value()
+                else if (glyph.type === GlyphType.EXPR) frame += glyph.value()[0]
             }
             console.log(`FRAME #${i++}`, frame)
             // update html

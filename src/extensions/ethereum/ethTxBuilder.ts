@@ -3,6 +3,7 @@ import { TxTemplate } from '../../types/txTemplate'
 import * as ethers from "ethers"
 import { StateProxy } from './stateProxy'
 import { Signer } from "../../interfaces/signer"
+import BigNumber from 'bignumber.js'
 
 enum Status { INIT, RUNNING }
 type EthTxConfig = {
@@ -38,9 +39,10 @@ export abstract class EthTxBuilder implements TxBuilder {
 
     public prepareTxPayload(): string {
         const { varList, argTypes, methodSig } = this.config
-        if (!varList) return ""
+        if (!varList || !varList.length) return ""
 
         const values = varList.map((varname, n) => this.state.get(varname, argTypes[n]))
+        // ToDo: encoding is broken
         const argBytes = ethers.utils.defaultAbiCoder.encode(argTypes, values).substring(2)
         return methodSig + argBytes
     }

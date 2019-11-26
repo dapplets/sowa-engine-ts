@@ -14,7 +14,7 @@ export class DappletController {
 
     async handleSendRequest() {
         const TX_META = [
-            "1162074690288005122",
+            1162074690288005122,
             "Let us create an open directory for speaker applications for conferences. Organizers can pick bests and community will see the whole offer. \n \nI suppose @EFDevcon was unable to select #devcon5 speakers by value and did it by speakers publicity. \n\nI would see rejected applications",
             "Dmitry Palchun",
             "@Ethernian",

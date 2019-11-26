@@ -1,4 +1,7 @@
 import { InternalTypes, TypedValue } from '../types/internalTypes'
+import { ethers } from 'ethers'
+import { isArrayish } from 'ethers/utils/bytes'
+import { EtherscanProvider } from 'ethers/providers'
 
 // It stores incoming request data and statuses of transaction execution (?)
 export class State {
@@ -30,26 +33,54 @@ export class State {
     }
 
     private _getValidator(type: InternalTypes): (value: any) => boolean {
-        // RFC 8610: Concise Data Definition Language (CDDL)
         switch (type) {
             case InternalTypes.Integer: return (v) => typeof v === "number"
             case InternalTypes.Bytes: return (v) => { throw Error("TODO!") }
-            case InternalTypes.Text: return (v) => typeof v === "string"
+            case InternalTypes.String: return (v) => typeof v === "string"
             case InternalTypes.Boolean: return (v) => typeof v === "boolean"
             default: return (v) => { throw Error("Incompatible CBOR type.") }
         }
     }
 
-    public get(key: string): TypedValue | undefined {
-        return this._map.get(key)
+    public get(keysAndFormatters: string): TypedValue | undefined {
+        if (!keysAndFormatters) throw Error("An empty key is not allowed.")
+        const parsed = keysAndFormatters.split(":")
+        const key = parsed.shift()
+        if (!key) throw Error("An empty key is not allowed.")
+        const formatters = parsed
+
+        let value = this._map.get(key)
+
+        if (value) {
+            for (const formatter of formatters) {
+                value = this._format(formatter, value)
+            }
+        }
+
+        return value
     }
 
     public set(key: string, value: TypedValue) {
+        if (key.indexOf(":") !== -1) throw Error("Key contains the prohibited characters.")
         this._map.set(key, value)
         this._updateHandlers.forEach(callback => callback())
     }
 
     public onUpdate(callback: () => void) {
         this._updateHandlers.push(callback)
+    }
+
+    private _format(formatter: string, value: TypedValue): TypedValue {
+        switch (formatter) {
+            case "toUtf8Bytes": {
+                if (typeof value[0] !== "string") throw Error("toUtf8Bytes doesn't support non-string parameters.")
+                return [ethers.utils.toUtf8Bytes(value[0]), InternalTypes.Bytes]
+            }
+            case "sha256": {
+                if (!isArrayish(value[0])) throw Error("sha256 doesn't support non-bytes parameters.")
+                return [ethers.utils.arrayify(ethers.utils.sha256(value[0])), InternalTypes.Bytes]
+            }
+            default: throw Error(`The formatter "${formatter}" is not supported.`)
+        }
     }
 }

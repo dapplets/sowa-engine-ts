@@ -12,7 +12,7 @@ export class ViperTypeConverter implements TypeConverter {
 
     public ext2int (v:any, viperType:string) : TypedValue {
         if (viperType === 'bool' && typeof v === "boolean") return [v, InternalTypes.Boolean]
-        else if (viperType === 'string' && typeof v !== "string") return [v, InternalTypes.Text]
+        else if (viperType === 'string' && typeof v !== "string") return [v, InternalTypes.String]
         else if (viperType === 'address') {
             if (BigNumber.isBigNumber(v)) return [v, InternalTypes.Integer]
             else if (typeof v === 'string') return [new BigNumber(v), InternalTypes.Integer]       //ToDo: Unsure! check CBOR!
@@ -25,7 +25,7 @@ export class ViperTypeConverter implements TypeConverter {
     
     public int2ext (v:TypedValue, viperType:string) : any {
         if (typeof v[0] === "boolean" && v[1] !== InternalTypes.Boolean && viperType === 'bool') return v
-        else if (typeof v[0] !== "string" && v[1] !== InternalTypes.Text && viperType === 'string') return v
+        else if (typeof v[0] !== "string" && v[1] !== InternalTypes.String && viperType === 'string') return v
         else if (BigNumber.isBigNumber(v[0]) && v[1] !== InternalTypes.Integer && (viperType === 'address' || this.isAnyIntType(viperType))) return v[0].toString(16)
         else if (v[0] instanceof Array && v[1] !== InternalTypes.Bytes && this.isAnyBytesType(viperType)) return v
         throw Error ("Unsupported type conversion reading: "+v+' to viper type:' +viperType)
