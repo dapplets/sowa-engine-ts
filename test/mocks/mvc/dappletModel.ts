@@ -3,8 +3,8 @@ import { TestDappletProvider } from "../testDappletProvider"
 import { DappletEngine } from "../../../src/core/dappletEngine"
 import { EthereumExtension } from '../../../src/extensions/ethereum'
 import { WalletEthSigner } from '../walletEthSigner'
-import { WalletGridMustacheRenderer } from '../views/walletGridMustacheRenderer'
-import { WalletPlainMustacheRenderer } from '../views/walletPlainMustacheRenderer'
+import { HtmlGridMustacheRenderer } from '../../../src/extensions/views/grid-mustasche-view/htmlGridMustacheRenderer'
+import { HtmlPlainMustacheRenderer } from '../../../src/extensions/views/plain-mustache-view/htmlPlainMustacheRenderer'
 import { GridMustacheView } from '../../../src/extensions/views/grid-mustasche-view/gridMustacheView'
 import { PlainMustacheView } from '../../../src/extensions/views/plain-mustache-view/plainMustacheView'
 
@@ -20,8 +20,8 @@ export class DappletModel {
             providers: [new TestDappletProvider()],
             extensions: [new EthereumExtension(new WalletEthSigner())],
             views: [
-                GridMustacheView.attachRenderer(new WalletGridMustacheRenderer()), 
-                PlainMustacheView.attachRenderer(new WalletPlainMustacheRenderer())
+                GridMustacheView.attachRenderer(new HtmlGridMustacheRenderer()),
+                PlainMustacheView.attachRenderer(new HtmlPlainMustacheRenderer())
             ]
         })
     }
@@ -32,7 +32,7 @@ export class DappletModel {
     }
 
     async approve() {
-        await this._engine?.approve()
+        //await this._engine?.approve()
     }
 
     bindGlyphsChanged(callback: (glyphs: Glyph[][]) => void) {

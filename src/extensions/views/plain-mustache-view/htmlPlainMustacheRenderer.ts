@@ -1,7 +1,7 @@
-import { PlainMustacheRenderer } from "../../../src/extensions/views/plain-mustache-view/plainMustacheRenderer"
-import { GlyphType, Glyph } from "../../../src/interfaces/view"
+import { PlainMustacheRenderer } from "./plainMustacheRenderer"
+import { GlyphType, Glyph } from "../../../interfaces/view"
 
-export class WalletPlainMustacheRenderer implements PlainMustacheRenderer {
+export class HtmlPlainMustacheRenderer implements PlainMustacheRenderer {
     public render(glyphs: Glyph[]): void {
         let result = ""
         for (const glyph of glyphs) {
