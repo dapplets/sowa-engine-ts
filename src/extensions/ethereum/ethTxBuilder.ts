@@ -3,6 +3,7 @@ import { TxTemplate } from '../../types/txTemplate'
 import * as ethers from "ethers"
 import { StateProxy } from './stateProxy'
 import { EthSigner } from "./ethSigner"
+import * as PubSub from "pubsub-js"
 
 export type EthData = { to: string, data: string }
 export enum EthTxState { CREATED=1, SIGNED=2, SENT=3, REPLACED=4, MINED=5, REJECTED=6, ERR=99 } //ToDo: REORG?
