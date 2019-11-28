@@ -10,7 +10,7 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
     const provider = new TestDappletProvider()
     const input: DappletTemplate = await provider.loadDapplet("7")
 
-    const de = new DappletExecutable(input, [], DEFAULT_CONFIG)
+    const de = new DappletExecutable(input, [], DEFAULT_CONFIG, "REQ-01")
 
     const expected = new Map<string, string>()
     expected.set("@baseUrl", "http://dapplet.org")

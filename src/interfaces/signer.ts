@@ -1,3 +1,5 @@
+export type TxEventListener = (state:any, msg:any)=>void
+
 export interface Signer { // ToDo: Think about how to rename it
-    signAndSend(payload: any): Promise<void>
+    signAndSend(payload: any, listener: TxEventListener): Promise<void>
 }

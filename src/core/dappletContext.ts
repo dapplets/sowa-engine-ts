@@ -21,17 +21,19 @@ export class DappletContext {
         const request: DappletRequest = cbor.decode(cborBinary)
         // dapplet loading and prepare for execution
         const dapplets = await Promise.all(
-            request.map(frame =>
+            request.map((frame, idx) =>
                 this._loadDapplet(frame[0]) // dappletId
                     .then(dappletTemplate => new DappletExecutable(
                         dappletTemplate,
                         frame[1] || [],
-                        this.config
+                        this.config,
+                        "F"+idx             //ToDo: how to address frame for subscriptions?
                     ))
             )
         )
-
-        const engine = new DappletEngine(dapplets, this)
+        
+        const root_topic = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10)
+        const engine = new DappletEngine(dapplets, this, root_topic)
         return engine
     }
 

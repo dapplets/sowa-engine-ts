@@ -1,4 +1,4 @@
-import { View, BaseView } from "../../../interfaces/view"
+import { View, Glyph } from "../../../interfaces/view"
 import { PlainMustacheView } from '../plain-mustache-view/plainMustacheView'
 
 export class GridMustacheView extends PlainMustacheView implements View {
@@ -8,8 +8,8 @@ export class GridMustacheView extends PlainMustacheView implements View {
     
     }
 
-    public parse() {
-        super.parse();
+    public parse() : Glyph[] {
+        return super.parse();
         // check TEXT nodes and insert markup
     }
 }

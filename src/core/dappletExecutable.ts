@@ -17,7 +17,7 @@ export class DappletExecutable {
     public views: View[] = []
     public activeView: View
 
-    constructor(template: DappletTemplate, txMetadata: any[], config: ContextConfig) {
+    constructor(template: DappletTemplate, txMetadata: any[], config: ContextConfig, private topic: string) {
         this.aliases = this._createAliasMap(template.aliases)
         this.state = this._createState(template.variables || {}, txMetadata)
         this._loadCompatibleViews(template.views, config.views || [])
@@ -27,14 +27,12 @@ export class DappletExecutable {
         this.activeView = this.views[0] //ToDo: MayBe implement another view selection strategy 
     }
 
-    public prepare(): [Signer, any][] {
-        const data: [Signer, any][] = []
-        for (let type in this.transactions) {
-            //ToDo: error! two builders with the same type will not work!!!
-            //ToDo: use name/id ?
-            const builder = this.transactions[type]
+    public prepare(): [TxBuilder, any][] {
+        const data: [TxBuilder, any][] = []
+        for (let builderName in this.transactions) {
+            const builder = this.transactions[builderName]  //ToDo: use array instead of Map
             if (builder.isReadyToRun()) {
-                data.push([builder.signer, builder.prepareTxPayload()])
+                data.push([builder, builder.prepareTxPayload()])
             }
         }
         return data
@@ -72,15 +70,15 @@ export class DappletExecutable {
     }
 
     private _createTxBuilders(txDecls: { [key: string]: TxTemplate }, extensions: Extension[]) {
-        for (const txName in txDecls) {
-            const globalName = this.aliases.get(txDecls[txName].type)
-            if (!globalName) throw Error(`Alias for ${txDecls[txName].type} is not defined in usings.`)
+        for (const builderName in txDecls) {
+            const globalName = this.aliases.get(txDecls[builderName].type)
+            if (!globalName) throw Error(`Alias for ${txDecls[builderName].type} is not defined in usings.`)
             const builder = extensions.map(e => { 
                 const ctor = e.txBuilders.find(b => b.GLOBAL_NAME == globalName)
-                return ctor && new ctor(txDecls[txName], this.state, e.signer)
+                return ctor && new ctor(txDecls[builderName], this.state, e.signer, this.topic +"." + builderName)
             }).find(b=>b)
             if (!builder) throw Error(`TxBuilder "${globalName}" is not supported.`)
-            this.transactions[txName] = builder
+            this.transactions[builderName] = builder
         }
     }
 
