@@ -20,7 +20,7 @@ export class PlainMustacheView implements View { //  extends BaseView
 
             let p0 = 0
             let evaluateExpr = (expr: string) => this.state.get(expr)
-            let m: RegExpExecArray | null;
+            let m: RegExpExecArray | null
             while ((m = r.exec(template)) !== null) {
                 let p1 = r.lastIndex - m[0].length
                 let text = template.substr(p0, p1 - p0)
