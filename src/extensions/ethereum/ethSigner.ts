@@ -1,6 +1,5 @@
-import { Signer, TxEventListener } from 'src/interfaces/signer';
-
-export type EthData = { to: string, data: string }
+import { Signer } from 'src/interfaces/signer';
+import { EthData, EthTxState, EthTxStateMsg} from 'src/extensions/ethereum/ethTxBuilder';
 export interface  EthSigner extends Signer {
-    signAndSend(payload: EthData, listener: TxEventListener): Promise<void>
+    signAndSend(payload: EthData, listener: (state:EthTxState, msg:EthTxStateMsg)=>void): Promise<void>
 }

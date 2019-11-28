@@ -1,4 +1,4 @@
-import { DappletContext } from './dappletContext'
+import { DappletContext, ID } from './dappletContext'
 import { DappletExecutable } from './dappletExecutable'
 import PubSub from 'pubsub-js'
 
@@ -14,31 +14,30 @@ export enum State {
     ERROR=99
 } 
 
+export type HistoryItem = any        //ToDo: make history events more specific?
+
 export class DappletEngine {
 
     needReEvaluate: boolean = true
 
-    constructor(public readonly frameExecutables: DappletExecutable[], private _context: DappletContext, private readonly topic: string) {
-        PubSub.publish(this.topic, State.INIT)
+    public eventHistory : HistoryItem[] = []
+
+    constructor(public readonly id: ID, public readonly frameExecutables: DappletExecutable[], private _context: DappletContext) {
+        PubSub.subscribe(this.id, (e:any) => this.eventHistory.push(e)) 
+        PubSub.publish(this.id, State.INIT)
     }
-
-    // // It's called when Storage/State is changing.
-    // // in the moment of receiving events from TxBuilder
-    // private _scheduleNextRun() {
-
-    // }
 
     async start(): Promise<void> {
         for (const exec of this.frameExecutables) {
             //exec.activeView.render()
         }
-        PubSub.publish(this.topic, State.WAITING_FOR_APPROVAL)
+        PubSub.publish(this.id, State.WAITING_FOR_APPROVAL)
     }
 
     public async onApproved() {
-        PubSub.publish(this.topic, State.EXECUTING)
+        PubSub.publish(this.id, State.EXECUTING)
         //ToDo: do we need notifications from state or we can just recalculate all "when"?
-        this.frameExecutables.forEach(f => f.state.onUpdate(() => this.needReEvaluate = true));
+        this.frameExecutables.forEach(f => f.state.onUpdate(() => this.needReEvaluate = true))
         await this.run()
     }
 
@@ -61,16 +60,18 @@ export class DappletEngine {
                     framePayload.forEach(([builder, data]) => {
                         ++n
                         builder.signAndSend(data).then(() => { 
-                            --n
+                            --n                                       //ToDo: publish TX_FINISHED? (will duplicate own builder's event)
                         }).catch(e => {
-                            PubSub.publish(this.topic, State.ERROR)
+                            PubSub.publish(this.id, State.ERROR)   //ToDo: publish errmsg
                         })
                     })
                 })
             }
             await this.sleep(MIN_WAIT_FOR_NEXT_RUN_MLS)
         } while (n > 0) //ToDo: check it: loop finishes if some tx are waiting for unrealistic conditions. Correct?
-        PubSub.publish(this.topic, State.FINISHED)
+        PubSub.publish(this.id, State.FINISHED)
+
+        PubSub.unsubscribe(this.id)  //cleanup on engine stop
     }
 
     private sleep(millis: number) {
