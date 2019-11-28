@@ -1,15 +1,13 @@
-import { View, BaseView } from "../../../interfaces/view"
-import { PlainMustacheView } from '../plain-mustache-view/plainMustacheView'
+import { View } from "../../../interfaces/view"
+import { ViewTemplate } from 'src/types/viewTemplate'
+import { State } from 'src/core/state'
 
-export class GridMustacheView extends PlainMustacheView implements View {
-    public readonly GLOBAL_NAME = "http://types.dapplets.org/view/grid-mustache/1.0"
+export type GridMustacheTemplate = (string | GridMustacheTemplate)[]
 
-    public render() {
-    
-    }
+export abstract class GridMustacheView implements View {
+    public static readonly GLOBAL_NAME = "http://types.dapplets.org/view/grid-mustache/1.0"
 
-    public parse() {
-        super.parse();
-        // check TEXT nodes and insert markup
-    }
+    constructor(protected viewTemplate: ViewTemplate<GridMustacheTemplate>, protected state: State) { }
+
+    public abstract render(): void
 }

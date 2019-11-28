@@ -57,16 +57,18 @@ export class DappletExecutable {
         return new State(variablesDecl, txMetadata)
     }
 
-    private _loadCompatibleViews(viewDecls: ViewTemplate[], viewCtors: ViewConstructor[]) {
+    private _loadCompatibleViews(viewDecls: ViewTemplate<any>[], viewCtors: ViewConstructor[]) {
         for (const viewDecl of viewDecls) {
             const globalName = this.aliases.get(viewDecl.type)
             if (!globalName) throw Error(`Alias for ${viewDecl.type} is not defined in usings.`)
             const ctor = viewCtors.find(v => v.GLOBAL_NAME === globalName)
             if (!ctor) {
-                console.warn(`View "${globalName}" is not compatible.`)
+                //console.warn(`View "${globalName}" is not compatible.`)
                 continue
             }
             const view = new ctor(viewDecl, this.state)
+            this.state.onUpdate(() => view.render())
+            view.render()
             this.views.push(view)
         }
     }

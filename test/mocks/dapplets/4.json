@@ -2,6 +2,7 @@
     "aliases": {
         "view-plain-mustache": "http://types.dapplets.org/view/plain-mustache/1.0",
         "view-html-mustache": "http://types.dapplets.org/view/html-mustache/1.0",
+        "view-grid-mustache": "http://types.dapplets.org/view/grid-mustache/1.0",
         "builder-tx-sol": "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0"
     },
 
@@ -13,9 +14,17 @@
         "authorImg": "string"
     },
 
-    "views": [{
+    "views": [
+        {
             "type": "view-html-mustache",
             "template": "<div style=\"margin-bottom: 16px;\"><img style=\"float:left;height:48px;margin-right:8px;\" src=\"{{authorImg}}\"\/><div><b>{{authorFullname}}<\/b><\/div><div style=\"font-size:smaller;color:#777;\">{{authorUsername}}<\/div><\/div><div style=\"clear:both;\">{{text}}<\/div><div style=\"font-size:10px;color:#777;margin-top:10px;\">ID {{id}}<\/div>"
+        },
+        {
+            "type": "view-grid-mustache",
+            "template": [
+                ["{{authorImg}}", ["{{authorFullname}}", "{{authorUsername}}"]],
+                ["{{text}}"]
+            ]
         },
         {
             "type": "view-plain-mustache",

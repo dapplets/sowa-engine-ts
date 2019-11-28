@@ -7,7 +7,7 @@ import { NOPEthSigner } from './core/NOPSigner'
 
 const DEFAULT_CONFIG: ContextConfig = {
     providers: [new GithubDappletProvider()], // new SwarmDappletProvider()
-    views: [PlainMustacheView],
+    views: [],
     formatters: [CameraFormatter],
     extensions: [ new EthereumExtension(new NOPEthSigner())]
 }

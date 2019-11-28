@@ -1,16 +1,13 @@
-import { View, BaseView, Glyph, GlyphType } from "../../../interfaces/view"
+import { View, Glyph, GlyphType } from "../../../interfaces/view"
 import { ViewTemplate } from 'src/types/viewTemplate'
 import { State } from 'src/core/state'
 
-export class PlainMustacheView implements View { //  extends BaseView
-    public static readonly GLOBAL_NAME = "http://types.dapplets.org/view/plain-mustache/1.0"
-    public glyphs: Glyph[] = []
-    private _onGlyphsChanged?: (glyphs: Glyph[]) => void
+type PlaintMustacheTemplate = string
 
-    constructor(protected viewTemplate: ViewTemplate, protected state: State) {
-        this.glyphs = this.parse()
-        this.state.onUpdate(() => this._onGlyphsChanged && this._onGlyphsChanged(this.parse()))
-    }
+export abstract class PlainMustacheView implements View { //  extends BaseView
+    public static readonly GLOBAL_NAME = "http://types.dapplets.org/view/plain-mustache/1.0"
+
+    constructor(protected viewTemplate: ViewTemplate<PlaintMustacheTemplate>, protected state: State) { }
 
     public parse(): Glyph[] {
         let glyphs: Glyph[] = []
@@ -35,7 +32,5 @@ export class PlainMustacheView implements View { //  extends BaseView
         return glyphs
     }
 
-    onGlyphsChanged(callback: (glyphs: Glyph[]) => void) {
-        this._onGlyphsChanged = callback
-    }
+    public abstract render(): void
 }
