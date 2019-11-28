@@ -2,10 +2,11 @@ import { TxBuilder } from "../../interfaces/txBuilder"
 import { TxTemplate } from '../../types/txTemplate'
 import * as ethers from "ethers"
 import { StateProxy } from './stateProxy'
-import { Signer } from "../../interfaces/signer"
+import { EthSigner, EthData } from "./ethSigner"
 import BigNumber from 'bignumber.js'
 
-enum Status { INIT, RUNNING }
+enum TxState { INIT, SENT, PENDING, MINED, REJECTED } //ToDo: REORG?
+
 type EthTxConfig = {
     methodSig: string | null
     argTypes: string[]
@@ -19,10 +20,10 @@ export type EthTxTemplate = TxTemplate & {
 
 export abstract class EthTxBuilder implements TxBuilder {
     public txConfig: any
-    private status: Status = Status.INIT
+    private status: TxState = TxState.INIT
     private config: EthTxConfig
 
-    constructor(public readonly txTemplate: EthTxTemplate, protected state: StateProxy, public readonly signer: Signer) {
+    constructor(public readonly txTemplate: EthTxTemplate, protected state: StateProxy, public readonly signer: EthSigner, private readonly topic: string) {
         this.config = {
             methodSig: txTemplate.function ? ethers.utils.id(txTemplate.function).substring(0, 10) : null,
             argTypes: txTemplate.function ? txTemplate.function.match(/\((.*)\)/)![1].split(',') : [],
@@ -37,6 +38,16 @@ export abstract class EthTxBuilder implements TxBuilder {
     // Writable `State` must be in every txBuilder own
     // Also, dappletFrameExecutor contains own state, where typed txMeta is available.
 
+    public signAndSend(data:EthData): Promise<void> {
+         return new Promise((resolve,reject)=>{
+            this.signer.signAndSend(data, (tx_state, msg) => {
+                PubSub.publish(this.topic, {tx_state, msg})
+                if (tx_state == TxState.MINED) resolve(msg)
+                else if (tx_state == TxState.REJECTED) reject(msg)
+            })
+        })
+    }
+
     public prepareTxPayload(): string {
         const { varList, argTypes, methodSig } = this.config
         if (!varList || !varList.length) return ""
@@ -48,21 +59,13 @@ export abstract class EthTxBuilder implements TxBuilder {
     }
 
     public isReadyToRun(): boolean {
-        return this.status == Status.INIT
+        return this.status == TxState.INIT
             && !this.isWaiting()
     }
 
     public isWaiting(): boolean {
         const when = this.txTemplate.when
         return !!when && !!this.evaluateExpression(when)
-    }
-
-    public async run(): Promise<any> {
-        this.status = Status.RUNNING
-    }
-
-    public on(event: string, callback: Function): void {
-
     }
 
     //ToDo: refactor to EL class

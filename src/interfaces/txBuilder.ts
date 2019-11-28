@@ -8,11 +8,10 @@ export interface TxBuilder {
     isReadyToRun(): boolean
     isWaiting(): boolean
     prepareTxPayload(): any
-    run(): Promise<any> // async
-    on(event: string, callback: Function): void // for running of new state machine
+    signAndSend(data:any): Promise<void>
 }
 
 export interface TxBuilderConstructor {
     GLOBAL_NAME: string
-    new(txTemplate: TxTemplate, state: State, signer: Signer): TxBuilder
+    new(txTemplate: TxTemplate, state: State, signer: Signer, topic: string): TxBuilder
 }
