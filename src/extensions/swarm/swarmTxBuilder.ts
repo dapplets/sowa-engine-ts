@@ -1,7 +1,7 @@
 import { TxBuilder } from "../../interfaces/txBuilder"
 import { TxTemplate } from '../../types/txTemplate'
 import { State } from '../../core/state'
-import { SwarmSigner } from './swarmSigner'
+import { SwarmSigner, SwarmData } from './swarmSigner'
 
 type SwarmTxTemplate = TxTemplate & {
     data?: string
@@ -26,11 +26,20 @@ export class SwarmTxBuilder implements TxBuilder {
         throw Error("Method not implemented.")
     }
 
-    public run(): Promise<any> {
-        throw Error("Method not implemented.")
-    }
+       // Writable `State` must be in every txBuilder own
+    // Also, dappletFrameExecutor contains own state, where typed txMeta is available.
 
-    public on(event: string, callback: Function): void {
-        throw Error("Method not implemented.")
-    }
+    public signAndSend(data:SwarmData): Promise<void> {
+        return new Promise((resolve,reject)=>{
+            //ToDo: implement it later
+            /*
+           this.signer.signAndSend(data, (tx_state, msg) => {
+               PubSub.publish(this.topic, {tx_state, msg})
+               if (tx_state == EthTxState.MINED) resolve(msg)
+               else if (tx_state == TxState.REJECTED) reject(msg)
+           })
+           */
+       })
+   }
+
 }

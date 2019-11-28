@@ -2,10 +2,14 @@ import { TxBuilder } from "../../interfaces/txBuilder"
 import { TxTemplate } from '../../types/txTemplate'
 import * as ethers from "ethers"
 import { StateProxy } from './stateProxy'
-import { EthSigner, EthData } from "./ethSigner"
-import BigNumber from 'bignumber.js'
+import { EthSigner } from "./ethSigner"
 
-enum TxState { INIT, SENT, PENDING, MINED, REJECTED } //ToDo: REORG?
+export type EthData = { to: string, data: string }
+export enum EthTxState { CREATED=1, SIGNED=2, SENT=3, REPLACED=4, MINED=5, REJECTED=6, ERR=99 } //ToDo: REORG?
+export type EthTxStateMsg = {
+    txid?: BigInteger
+    events?: any                  //ToDo: later: use Dapplets to display events 
+}
 
 type EthTxConfig = {
     methodSig: string | null
@@ -20,7 +24,7 @@ export type EthTxTemplate = TxTemplate & {
 
 export abstract class EthTxBuilder implements TxBuilder {
     public txConfig: any
-    private status: TxState = TxState.INIT
+    private status: EthTxState = EthTxState.CREATED
     private config: EthTxConfig
 
     constructor(public readonly txTemplate: EthTxTemplate, protected state: StateProxy, public readonly signer: EthSigner, private readonly topic: string) {
@@ -42,8 +46,8 @@ export abstract class EthTxBuilder implements TxBuilder {
          return new Promise((resolve,reject)=>{
             this.signer.signAndSend(data, (tx_state, msg) => {
                 PubSub.publish(this.topic, {tx_state, msg})
-                if (tx_state == TxState.MINED) resolve(msg)
-                else if (tx_state == TxState.REJECTED) reject(msg)
+                if (tx_state == EthTxState.MINED) resolve()
+                else if (tx_state == EthTxState.REJECTED) reject(msg)
             })
         })
     }
@@ -59,7 +63,7 @@ export abstract class EthTxBuilder implements TxBuilder {
     }
 
     public isReadyToRun(): boolean {
-        return this.status == TxState.INIT
+        return this.status == EthTxState.CREATED
             && !this.isWaiting()
     }
 
