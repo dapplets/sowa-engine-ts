@@ -73,10 +73,11 @@ export class DappletExecutable {
         for (const builderName in txDecls) {
             const globalName = this.aliases.get(txDecls[builderName].type)
             if (!globalName) throw Error(`Alias for ${txDecls[builderName].type} is not defined in usings.`)
-            const builder = extensions.map(e => { 
+            const builder = extensions.map(e => {
                 const ctor = e.txBuilders.find(b => b.GLOBAL_NAME == globalName)
-                return ctor && new ctor(txDecls[builderName], this.state, e.signer, this.topic +"." + builderName)
-            }).find(b=>b)
+                // ToDo: Core shouldn't know about e.signer. Extension should take care about Signer-Builder relationship.
+                return ctor && new ctor(txDecls[builderName], this.state, e.signer, this.topic + "." + builderName)
+            }).find(b => b)
             if (!builder) throw Error(`TxBuilder "${globalName}" is not supported.`)
             this.transactions[builderName] = builder
         }

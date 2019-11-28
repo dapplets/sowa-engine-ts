@@ -10,6 +10,7 @@ const DEFAULT_CONFIG: ContextConfig = {
     views: [PlainMustacheView],
     formatters: [CameraFormatter],
     extensions: [ new EthereumExtension(new NOPEthSigner())]
+    // ToDo: unify classes ([new X] vs [X])
 }
 
 export { DEFAULT_CONFIG }
