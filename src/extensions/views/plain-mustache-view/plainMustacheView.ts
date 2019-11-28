@@ -1,11 +1,14 @@
 import { View, Glyph, GlyphType } from "../../../interfaces/view"
 import { ViewTemplate } from 'src/types/viewTemplate'
 import { State } from 'src/core/state'
+import { PlainMustacheRenderer } from './plainMustacheRenderer'
 
 type PlaintMustacheTemplate = string
 
-export abstract class PlainMustacheView implements View { //  extends BaseView
+export class PlainMustacheView implements View { //  extends BaseView
     public static readonly GLOBAL_NAME = "http://types.dapplets.org/view/plain-mustache/1.0"
+
+    protected renderer?: PlainMustacheRenderer
 
     constructor(protected viewTemplate: ViewTemplate<PlaintMustacheTemplate>, protected state: State) { }
 
@@ -32,5 +35,12 @@ export abstract class PlainMustacheView implements View { //  extends BaseView
         return glyphs
     }
 
-    public abstract render(): void
+    public render(): void {
+        this.renderer?.render(this.parse())
+    }
+
+    public static attachRenderer(renderer: PlainMustacheRenderer) {
+        PlainMustacheView.prototype.renderer = renderer
+        return PlainMustacheView
+    }
 }

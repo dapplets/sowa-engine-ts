@@ -3,8 +3,10 @@ import { TestDappletProvider } from "../testDappletProvider"
 import { DappletEngine } from "../../../src/core/dappletEngine"
 import { EthereumExtension } from '../../../src/extensions/ethereum'
 import { WalletEthSigner } from '../walletEthSigner'
-import { GridMustacheRenderer } from '../views/gridMustacheRenderer'
-import { PlainMustacheRenderer } from '../views/plainMustacheRenderer'
+import { WalletGridMustacheRenderer } from '../views/walletGridMustacheRenderer'
+import { WalletPlainMustacheRenderer } from '../views/walletPlainMustacheRenderer'
+import { GridMustacheView } from '../../../src/extensions/views/grid-mustasche-view/gridMustacheView'
+import { PlainMustacheView } from '../../../src/extensions/views/plain-mustache-view/plainMustacheView'
 
 import * as cbor from "cbor"
 import { Glyph } from "../../../src/interfaces/view"
@@ -17,7 +19,10 @@ export class DappletModel {
         this._dappletContext = new DappletContext({
             providers: [new TestDappletProvider()],
             extensions: [new EthereumExtension(new WalletEthSigner())],
-            views: [GridMustacheRenderer, PlainMustacheRenderer]
+            views: [
+                GridMustacheView.attachRenderer(new WalletGridMustacheRenderer()), 
+                PlainMustacheView.attachRenderer(new WalletPlainMustacheRenderer())
+            ]
         })
     }
 

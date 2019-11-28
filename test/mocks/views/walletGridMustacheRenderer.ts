@@ -1,4 +1,5 @@
-import { GridMustacheView, GridMustacheTemplate } from "../../../src/extensions/views/grid-mustasche-view/gridMustacheView"
+import { GridMustacheRenderer } from "../../../src/extensions/views/grid-mustasche-view/gridMustacheRenderer"
+import { GridMustacheTemplate } from "../../../src/extensions/views/grid-mustasche-view/gridMustacheView"
 
 type HtmlCssParser = {
     css: string
@@ -7,7 +8,7 @@ type HtmlCssParser = {
     my: string
 }
 
-export class GridMustacheRenderer extends GridMustacheView {
+export class WalletGridMustacheRenderer implements GridMustacheRenderer {
     private _parse(template: GridMustacheTemplate, isRow?: boolean, prefix?: string) {
         if (!prefix) prefix = "cell"
         const result: HtmlCssParser = {
@@ -52,8 +53,8 @@ export class GridMustacheRenderer extends GridMustacheView {
         return result
     }
 
-    public render(): void {
-        const result = this._parse(this.viewTemplate.template)
+    public render(template: GridMustacheTemplate): void {
+        const result = this._parse(template)
         console.log("GridMustacheRenderer", result)
     }
 }
