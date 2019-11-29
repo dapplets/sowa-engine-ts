@@ -10,21 +10,24 @@ import { Extension } from '../interfaces/extension'
 type VariablesDeclType = { [alias: string]: string }
 
 export class DappletExecutable {
-    //ToDo: better aliases map to GUIDs. and GUIDs to Documents separately (in ens)
+    //ToDo-2.1: better aliases map to GUIDs. and GUIDs to Documents separately (in ens)
+    //ToDo-2.2: introduce documentation system based on GUIDs
+    //ToDo-2.3: replace all strings with GUID aliases (think about "@" replacement and hierarchy)
     public aliases = new Map<string, string>()
     public state: State
     public transactions: { [key: string]: TxBuilder } = {}
     public views: View[] = []
     public activeView: View
 
-    constructor(template: DappletTemplate, txMetadata: any[], config: ContextConfig, private topic: string) {
+    constructor(template: DappletTemplate, txMetadata: any[], config: ContextConfig, private parentTopic: string) {
         this.aliases = this._createAliasMap(template.aliases)
         this.state = this._createState(template.variables || {}, txMetadata)
         this._loadCompatibleViews(template.views, config.views || [])
         this._createTxBuilders(template.transactions, config.extensions || [])
         this._validate()
 
-        this.activeView = this.views[0] //ToDo: MayBe implement another view selection strategy 
+        //ToDo: This is a default selection. Set activeView in the callback handler onDappletRequest
+        this.activeView = this.views[0]
     }
 
     public prepare(): [TxBuilder, any][] {
@@ -78,7 +81,7 @@ export class DappletExecutable {
             const builder = extensions.map(e => {
                 const ctor = e.txBuilders.find(b => b.GLOBAL_NAME == globalName)
                 // ToDo: Core shouldn't know about e.signer. Extension should take care about Signer-Builder relationship.
-                return ctor && new ctor(txDecls[builderName], this.state, e.signer, this.topic + "." + builderName)
+                return ctor && new ctor(txDecls[builderName], this.state, e.signer, this.parentTopic + "." + builderName)
             }).find(b => b)
             if (!builder) throw Error(`TxBuilder "${globalName}" is not supported.`)
             this.transactions[builderName] = builder
