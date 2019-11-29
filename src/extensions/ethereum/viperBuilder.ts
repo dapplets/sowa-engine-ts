@@ -2,7 +2,7 @@ import { EthTxBuilder, EthTxTemplate } from './ethTxBuilder'
 import { StateProxy } from './stateProxy'
 import { ViperTypeConverter } from './viperTypeConverter'
 import { State } from '../../core/state'
-import { Signer } from 'src/interfaces/signer';
+import { Signer } from '../../interfaces/signer';
 
 export class ViperBuilder extends EthTxBuilder{
     public static GLOBAL_NAME = "http://types.dapplets.org/ethereum/txbuilders/viper/1.0"

@@ -1,4 +1,4 @@
-import { Signer } from 'src/interfaces/signer'
+import { Signer } from '../../interfaces/signer'
 
 export type SwarmData = { to: string, data: string }
 export enum SwarmTxState {CREATED=1, SIGNED=2, SENT=3, REPLACED=4, MINED=5, ERR=99}

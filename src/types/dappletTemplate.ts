@@ -13,7 +13,7 @@ export type DappletTemplate = {
         [key: string]: string
     }
 
-    views: ViewTemplate[]
+    views: ViewTemplate<any>[]
 
     transactions: {
         [key: string]: TxTemplate

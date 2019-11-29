@@ -6,7 +6,7 @@ import { ViewTemplate } from '../types/viewTemplate'
 import { TxBuilder, TxBuilderConstructor } from "../interfaces/txBuilder"
 import { State } from './state'
 import { Extension } from '../interfaces/extension'
-import { Signer } from 'src/interfaces/signer'
+import { Signer } from '../interfaces/signer'
 
 type VariablesDeclType = { [alias: string]: string }
 

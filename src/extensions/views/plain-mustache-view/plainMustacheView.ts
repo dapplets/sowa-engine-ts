@@ -1,6 +1,6 @@
 import { View, Glyph, GlyphType } from "../../../interfaces/view"
-import { ViewTemplate } from 'src/types/viewTemplate'
-import { State } from 'src/core/state'
+import { ViewTemplate } from '../../../types/viewTemplate'
+import { State } from '../../../core/state'
 import { PlainMustacheRenderer } from './plainMustacheRenderer'
 
 type PlaintMustacheTemplate = string

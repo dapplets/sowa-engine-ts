@@ -1,4 +1,4 @@
-import { Glyph } from 'src/interfaces/view';
+import { Glyph } from '../../../interfaces/view';
 
 export interface PlainMustacheRenderer {
     render(glyphs: Glyph[]): void
