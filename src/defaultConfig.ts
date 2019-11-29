@@ -1,4 +1,4 @@
-import { ContextConfig } from "./types/contextConfig"
+import { ContextConfig } from './types/contextConfig'
 import { GithubDappletProvider } from './providers/githubDappletProvider'
 import { CameraFormatter } from './extensions/formatters/cameraFormatter'
 import { PlainMustacheView } from './extensions/views/plain-mustache-view/plainMustacheView'

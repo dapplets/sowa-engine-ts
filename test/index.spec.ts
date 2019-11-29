@@ -2,23 +2,18 @@ import 'mocha'
 import { expect } from "chai"
 import * as cbor from "cbor"
 
-import { DappletContext } from "../src/index"
 import { TestDappletProvider } from "./mocks/testDappletProvider"
-import { EthereumExtension } from '../src/extensions/ethereum'
 import { WalletEthSigner } from './mocks/walletEthSigner'
-import { HtmlGridMustacheRenderer } from '../src/extensions/views/grid-mustasche-view/htmlGridMustacheRenderer'
-import { HtmlPlainMustacheRenderer } from '../src/extensions/views/plain-mustache-view/htmlPlainMustacheRenderer'
-import { GridMustacheView } from '../src/extensions/views/grid-mustasche-view/gridMustacheView'
-import { PlainMustacheView } from '../src/extensions/views/plain-mustache-view/plainMustacheView'
+import { DappletContext, extensions } from '../src'
 
 describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', () => {
   it('send dapplet request', async () => {
     const context = new DappletContext({
       providers: [new TestDappletProvider()],
-      extensions: [new EthereumExtension(new WalletEthSigner())],
+      extensions: [new extensions.EthereumExtension(new WalletEthSigner())],
       views: [
-        GridMustacheView.attachRenderer(new HtmlGridMustacheRenderer()),
-        PlainMustacheView.attachRenderer(new HtmlPlainMustacheRenderer())
+        extensions.views.gridMustache.GridMustacheView.attachRenderer(new extensions.views.gridMustache.HtmlGridMustacheRenderer()),
+        extensions.views.plainMustache.PlainMustacheView.attachRenderer(new extensions.views.plainMustache.HtmlPlainMustacheRenderer())
       ]
     })
 

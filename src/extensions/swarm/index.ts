@@ -1,8 +1,8 @@
 import { Extension } from '../../interfaces/extension'
 import { SwarmSigner } from './swarmSigner'
 import { SwarmTxBuilder } from './swarmTxBuilder'
-``
-export class SwarmExtenstion implements Extension {
+
+export class SwarmExtension implements Extension {
     constructor(public signer: SwarmSigner) {
         SwarmTxBuilder.prototype.signer = signer
     }
