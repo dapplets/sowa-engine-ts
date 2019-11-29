@@ -16,6 +16,7 @@ export class DappletContext {
     public readonly config: ContextConfig
 
     constructor(config: ContextConfig = DEFAULT_CONFIG) {
+        // ToDo: may be a deep merging is needed here
         this.config = { ...DEFAULT_CONFIG, ...config }
     }
 
@@ -25,13 +26,13 @@ export class DappletContext {
         const request: DappletRequest = cbor.decode(cborBinary)
         // dapplet loading and prepare for execution
         const dapplets = await Promise.all(
-            request.map((frame, idx) =>
-                this._loadDapplet(frame[0]) // dappletId
+            request.map(([dappletId, metadata], idx) =>
+                this._loadDapplet(dappletId)
                     .then(dappletTemplate => new DappletExecutable(
                         dappletTemplate,
-                        frame[1] || [],
+                        metadata || [],
                         this.config,
-                        "F"+idx             //ToDo: how to address frame for subscriptions?
+                        "F" + idx             // ToDo: how to address frame for subscriptions?
                     ))
             )
         )
@@ -39,9 +40,19 @@ export class DappletContext {
         const engineId = this.newId()
         const engine = new DappletEngine(engineId, dapplets, this)
         this.engines[engineId] = engine
-        return engine
+        return engine // ToDo: what should processRequest return?
+        // ToDo: return { 
+        //    onDappletRequest: function(...), 
+        //    onFetchStatus: function(...), 
+        //}
     }
 
+    //ToDo: clear distinguish between GUIDs and IDs
+
+    //ToDo: there are three kinds of IDs: 
+    // 1) by anyone randomly generated GUIDs (long)
+    // 2) centrally created sequencial IDs (short)
+    // we short ids are better, but which one we'll use where?
     public newId(): ID {
         return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10)
     }
@@ -52,22 +63,24 @@ export class DappletContext {
         return cbor.encode(events)
     }
 
+    //ToDo: create (extensible?/unified?) format for events. 
+    //Browser will know only START/FINISH?
+    //later we can add more specific events
+    //return only some filtered events to browser app? (depends on topic? only from root level)
+    //but the root level subscription returns ALL nested events currently. 
     public fetchHistory(engineId: string, startingFrom: number) : HistoryItem[] {
         const engine = this.engines[engineId];
-        return engine && engine.eventHistory.slice(startingFrom)
+        return engine?.eventHistory.slice(startingFrom)
     }
 
     private async _loadDapplet(dappletId: string): Promise<DappletTemplate> {
         for (const provider of this.config.providers || []) {
             try {
+                // ToDo: check hashes of dapplet templates and its audit status
                 const dapplet = await provider.loadDapplet(dappletId)
                 if (dapplet) return dapplet
             } catch (err) { }
         }
         throw Error(`All configured providers don't contain the dapplet ${dappletId}.`)
-    }
-
-    async loadResource(id: string): Promise<ArrayBuffer> {
-        throw Error("NOT IMPLEMENTED")
     }
 }

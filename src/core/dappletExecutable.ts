@@ -3,14 +3,14 @@ import { TxTemplate } from '../types/txTemplate'
 import { ContextConfig } from '../types/contextConfig'
 import { ViewConstructor, View } from "../interfaces/view"
 import { ViewTemplate } from '../types/viewTemplate'
-import { TxBuilder, TxBuilderConstructor } from "../interfaces/txBuilder"
+import { TxBuilder } from "../interfaces/txBuilder"
 import { State } from './state'
 import { Extension } from '../interfaces/extension'
-import { Signer } from '../interfaces/signer'
 
 type VariablesDeclType = { [alias: string]: string }
 
 export class DappletExecutable {
+    //ToDo: better aliases map to GUIDs. and GUIDs to Documents separately (in ens)
     public aliases = new Map<string, string>()
     public state: State
     public transactions: { [key: string]: TxBuilder } = {}
