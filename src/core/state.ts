@@ -1,7 +1,6 @@
 import { InternalTypes, TypedValue } from '../types/internalTypes'
 import { ethers } from 'ethers'
 import { isArrayish } from 'ethers/utils/bytes'
-import { EtherscanProvider } from 'ethers/providers'
 
 // It stores incoming request data and statuses of transaction execution (?)
 export class State {
@@ -32,12 +31,14 @@ export class State {
         }
     }
 
+    // ToDo: maybe it's better to check CBOR types in binary representation? Every CBOR type is encoded as special binary code, which we can check.
     private _getValidator(type: InternalTypes): (value: any) => boolean {
         switch (type) {
             case InternalTypes.Integer: return (v) => typeof v === "number"
             case InternalTypes.Bytes: return (v) => { throw Error("TODO!") }
             case InternalTypes.String: return (v) => typeof v === "string"
             case InternalTypes.Boolean: return (v) => typeof v === "boolean"
+            // ToDo: do we support a float type from IEEE 754?
             default: return (v) => { throw Error("Incompatible CBOR type.") }
         }
     }
@@ -70,6 +71,9 @@ export class State {
         this._updateHandlers.push(callback)
     }
 
+    // ToDo: understand what formatters should be built-in
+    // ToDo: implement built-in formatters
+    // ToDo: get rid of dependency of ethers.js
     private _format(formatter: string, value: TypedValue): TypedValue {
         switch (formatter) {
             case "toUtf8Bytes": {

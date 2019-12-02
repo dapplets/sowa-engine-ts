@@ -1,12 +1,16 @@
 import { TxBuilder } from "../../interfaces/txBuilder"
 import { TxTemplate } from '../../types/txTemplate'
-import * as ethers from "ethers"
 import { StateProxy } from './stateProxy'
 import { EthSigner } from "./ethSigner"
+import * as ethers from "ethers"
 import * as PubSub from "pubsub-js"
 
 export type EthData = { to: string, data: string }
+
+// ToDo: whom do these custom events need? 
+// ToDo: maybe we should unify/standardize common events, which will be accessible globally for all extensions and will be required to implement
 export enum EthTxState { CREATED = 1, SIGNED = 2, SENT = 3, REPLACED = 4, MINED = 5, REJECTED = 6, ERR = 99 } //ToDo: REORG?
+
 export type EthTxStateMsg = {
     txid?: BigInteger
     events?: any                  //ToDo: later: use Dapplets to display events 
@@ -28,7 +32,10 @@ export abstract class EthTxBuilder implements TxBuilder {
     private status: EthTxState = EthTxState.CREATED
     private config: EthTxConfig
 
+    // ToDo: the interface of a constructor is becoming difficult... maybe it's a signal for reorg?
     constructor(public readonly txTemplate: EthTxTemplate, protected state: StateProxy, public readonly signer: EthSigner, private readonly topic: string) {
+        // ToDo: validate EthTxTemplate syntax?
+
         this.config = {
             methodSig: txTemplate.function ? ethers.utils.id(txTemplate.function).substring(0, 10) : null,
             argTypes: txTemplate.function ? txTemplate.function.match(/\((.*)\)/)![1].split(',') : [],
@@ -45,6 +52,8 @@ export abstract class EthTxBuilder implements TxBuilder {
 
     public signAndSend(data: EthData): Promise<void> {
         return new Promise((resolve, reject) => {
+            // ToDo: current interface of Signer doesn't require to implement return `EthTxState.MINED` and `EthTxState.REJECTED`
+            // ToDo: why not use usual Promises for `signer.signAndSend`? They also have the resolved (EthTxState.MINED) and the rejected (EthTxState.REJECTED) statuses natively.
             this.signer.signAndSend(data, (tx_state, msg) => {
                 PubSub.publish(this.topic, { tx_state, msg })
                 if (tx_state == EthTxState.MINED) resolve()
@@ -65,7 +74,7 @@ export abstract class EthTxBuilder implements TxBuilder {
 
     public isReadyToRun(): boolean {
         return this.status == EthTxState.CREATED
-            && !this.isWaiting()
+            && !this.isWaiting() // ToDo: maybe collapse `isWaiting()` to `isReadyToRun()` and remove it from interface `TxBuilder`
     }
 
     public isWaiting(): boolean {

@@ -8,6 +8,7 @@ import { TypeConverter } from '../../interfaces/typeConverter'
 
 // https://vyper.readthedocs.io/en/v0.1.0-beta.13/types.html
 
+// ToDo: maybe split Viper and Solidity builders into different extensions?
 export class ViperTypeConverter implements TypeConverter {
 
     public ext2int(v: any, viperType: string): TypedValue {

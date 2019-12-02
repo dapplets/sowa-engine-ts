@@ -54,6 +54,7 @@ export class DappletExecutable {
         return this.aliases
     }
 
+    // ToDo: no sense in the separate method (here is no anything besides `new`)
     private _createState(variablesDecl: VariablesDeclType, txMetadata: any[]) {
         return new State(variablesDecl, txMetadata)
     }

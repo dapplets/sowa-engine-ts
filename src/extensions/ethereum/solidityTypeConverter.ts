@@ -7,6 +7,8 @@ import { ethers } from 'ethers'
 // unsure about byte1, byte, byte[]
 // + nested arrays
 
+// ToDo: maybe split Viper and Solidity builders into different extensions?
+// ToDo: Is type converter used by someone else besides StateProxy? Maybe it needs to collapse TypeConverter into StateProxy?
 export class SolidityTypeConverter implements TypeConverter {
 
     public ext2int(v: any, solType: string): TypedValue {
