@@ -32,13 +32,15 @@ export class State {
     }
 
     // ToDo: maybe it's better to check CBOR types in binary representation? Every CBOR type is encoded as special binary code, which we can check.
+    // ToDo: no sense to return a function
     private _getValidator(type: InternalTypes): (value: any) => boolean {
         switch (type) {
             case InternalTypes.Integer: return (v) => typeof v === "number"
             case InternalTypes.Bytes: return (v) => { throw Error("TODO!") }
             case InternalTypes.String: return (v) => typeof v === "string"
             case InternalTypes.Boolean: return (v) => typeof v === "boolean"
-            // ToDo: do we support a float type from IEEE 754?
+            // ToDo: do we support a float type from IEEE 754? 
+            // Answer: yes, at the same time we'll check the converting of unsupported types into byte array
             default: return (v) => { throw Error("Incompatible CBOR type.") }
         }
     }

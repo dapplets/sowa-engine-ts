@@ -22,7 +22,7 @@ export class DappletExecutable {
     constructor(template: DappletTemplate, txMetadata: any[], config: ContextConfig, private parentTopic: string) {
         this.aliases = this._createAliasMap(template.aliases)
         this.state = this._createState(template.variables || {}, txMetadata)
-        this._loadCompatibleViews(template.views, config.views || [])
+        this._createCompatibleViews(template.views, config.views || [])
         this._createTxBuilders(template.transactions, config.extensions || [])
         this._validate()
 
@@ -54,12 +54,11 @@ export class DappletExecutable {
         return this.aliases
     }
 
-    // ToDo: no sense in the separate method (here is no anything besides `new`)
     private _createState(variablesDecl: VariablesDeclType, txMetadata: any[]) {
         return new State(variablesDecl, txMetadata)
     }
 
-    private _loadCompatibleViews(viewDecls: ViewTemplate<any>[], viewCtors: ViewConstructor[]) {
+    private _createCompatibleViews(viewDecls: ViewTemplate<any>[], viewCtors: ViewConstructor[]) {
         for (const viewDecl of viewDecls) {
             const globalName = this.aliases.get(viewDecl.type)
             if (!globalName) throw Error(`Alias for ${viewDecl.type} is not defined in usings.`)

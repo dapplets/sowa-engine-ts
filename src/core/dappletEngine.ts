@@ -26,17 +26,8 @@ export class DappletEngine {
         PubSub.publish(this.id, State.INIT)
     }
 
-    // ToDo: Nothing uses this method
-    async start(): Promise<void> {
-        for (const exec of this.frameExecutables) {
-            //exec.activeView.render()
-        }
-        PubSub.publish(this.id, State.WAITING_FOR_APPROVAL)
-    }
-
-    // ToDo: Maybe rename to `approve()`, because there are no any callbacks. This method will be called by Wallet's ViewController.
-    // ToDo: Should we return this method after `context.processRequest` to be able to call this from a Wallet?
-    public async onApproved() {
+    // ToDo: return this method in the onDappletRequest callback of Dima's pattern.
+    public async approve() {
         PubSub.publish(this.id, State.EXECUTING)
         // ToDo: do we need notifications from state or we can just recalculate all "when"?
         this.frameExecutables.forEach(f => f.state.onUpdate(() => this._needReEvaluate = true)) // ToDo: move to constructor?
