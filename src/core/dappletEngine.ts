@@ -15,6 +15,7 @@ export enum State {
 
 export type HistoryItem = any        //ToDo: make history events more specific?
 
+//ToDo: let Wallet possibility to abort the (running) DappletEngine.
 export class DappletEngine {
 
     private _needReEvaluate: boolean = true

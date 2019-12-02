@@ -9,6 +9,7 @@ import { ethers } from 'ethers'
 
 // ToDo: maybe split Viper and Solidity builders into different extensions?
 // ToDo: Is type converter used by someone else besides StateProxy? Maybe it needs to collapse TypeConverter into StateProxy?
+// ToDo: Move to SolidityBuilder as private class?
 export class SolidityTypeConverter implements TypeConverter {
 
     public ext2int(v: any, solType: string): TypedValue {
