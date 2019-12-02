@@ -5,7 +5,7 @@ import { EthSigner } from './ethSigner'
 import { ViperBuilder } from './viperBuilder'
 
 export class EthereumExtension implements Extension {
-    constructor(public signer: EthSigner) {}
+    constructor(public signer: EthSigner) { }
 
     txBuilders = [SolidityBuilder, ViperBuilder]
     formatters = [EthAddressHtmlFormatter]

@@ -1,7 +1,7 @@
 import { DappletContext } from './core/dappletContext'
 import * as extensions from './extensions'
 
-export { 
+export {
     DappletContext,
     extensions
 }

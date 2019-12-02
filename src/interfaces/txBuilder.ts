@@ -8,7 +8,7 @@ export interface TxBuilder {
     isReadyToRun(): boolean
     isWaiting(): boolean
     prepareTxPayload(): any
-    signAndSend(data:any): Promise<void>
+    signAndSend(data: any): Promise<void>
 }
 
 export interface TxBuilderConstructor {

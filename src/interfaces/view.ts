@@ -3,10 +3,10 @@ import { State } from '../core/state'
 
 export type Glyph = {
     type: GlyphType;
-    value:any;
+    value: any;
 }
 
-export enum GlyphType {TEXT, EXPR}
+export enum GlyphType { TEXT, EXPR }
 
 export interface View {
     //glyphs: Glyph[]
@@ -28,7 +28,7 @@ export interface ViewConstructor {
 //     constructor(protected viewTemplate: ViewTemplate<any>, protected state: State) {
 //         state.onUpdate(() => this.render())
 //     }
-    
+
 //     abstract glyphs: Glyph[];
 //     abstract parse():void
 //     abstract render(): void

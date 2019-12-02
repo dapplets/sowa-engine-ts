@@ -20,7 +20,7 @@ export class DappletContext {
         this.config = { ...DEFAULT_CONFIG, ...config }
     }
 
-    engines : { [key:string]: DappletEngine} = {}
+    engines: { [key: string]: DappletEngine } = {}
 
     async processRequest(cborBinary: Buffer): Promise<DappletEngine> {
         const request: DappletRequest = cbor.decode(cborBinary)
@@ -36,7 +36,7 @@ export class DappletContext {
                     ))
             )
         )
-        
+
         const engineId = this.newId()
         const engine = new DappletEngine(engineId, dapplets, this)
         this.engines[engineId] = engine
@@ -68,7 +68,7 @@ export class DappletContext {
     //later we can add more specific events
     //return only some filtered events to browser app? (depends on topic? only from root level)
     //but the root level subscription returns ALL nested events currently. 
-    public fetchHistory(engineId: string, startingFrom: number) : HistoryItem[] {
+    public fetchHistory(engineId: string, startingFrom: number): HistoryItem[] {
         const engine = this.engines[engineId];
         return engine?.eventHistory.slice(startingFrom)
     }

@@ -1,3 +1,1 @@
-export type DappletTxResult = {
-
-}
+export type DappletTxResult = {}

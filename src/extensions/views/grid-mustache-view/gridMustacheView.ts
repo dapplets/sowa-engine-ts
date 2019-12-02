@@ -33,7 +33,7 @@ export class GridMustacheView implements View {
             // ToDo: check types
             if (value && value[0] && typeof value[0] === "string") {
                 template = template.replace(m[0], value[0])
-            }            
+            }
         }
         return template
     }

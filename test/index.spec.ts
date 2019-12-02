@@ -5,7 +5,6 @@ import * as cbor from "cbor"
 import { TestDappletProvider } from "./mocks/testDappletProvider"
 import { WalletEthSigner } from './mocks/walletEthSigner'
 import { DappletContext, extensions } from '../src'
-import { HtmlGridMustacheRenderer } from '../src/extensions/views/grid-mustache-view'
 
 describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', () => {
   it('send dapplet request', async () => {
@@ -41,9 +40,9 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
   })
 })
 
-
+/*
 class WalletRenderer {
-  
+
 }
 
 class DappletComponent extends React.Component {
@@ -54,12 +53,12 @@ class DappletComponent extends React.Component {
   }
 
   didMount() {
-    
+
 
     // we are in wallet context here
     // callback will be called when engine create view instances 
-    processRequest(...., function configure(views: View[]){
-      for(let v of views) v.attachRenderer(new WalletRenderer())
+    processRequest(...., function configure(views: View[]) {
+      for (let v of views) v.attachRenderer(new WalletRenderer())
 
     })
 
@@ -76,17 +75,17 @@ class DappletComponent extends React.Component {
         })
 
         // attach singers for txBuilders
-      }).onStateFetchRequest((engineId,startingFrom)=>events[]) : cborBytesArray
-  
+      }).onStateFetchRequest((engineId, startingFrom) => events[]) : cborBytesArray
+
   }
 
   render() {
-    return (<div>{this.state.views.map(v => this.createFrameComponent(v))}</div>)
+    return (<div>{ this.state.views.map(v => this.createFrameComponent(v)) } < /div>)
   }
 
   createFrameComponent(v: View) {
     // compare global id
-    return <PlainMustacheComponent v={v}/>
+    return <PlainMustacheComponent v={ v } />
   }
 }
 
@@ -100,10 +99,11 @@ class PlainMustacheComponent {
   didMount() {
     view.onChanged(() => {
       // change state of react component
-    }) 
+    })
   }
 
   render() {
     // here is html
   }
 }
+*/

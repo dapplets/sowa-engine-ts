@@ -11,8 +11,8 @@ export enum State {
     WAITING_FOR_APPROVAL = 2,
     EXECUTING = 4,
     FINISHED = FINAL_STATE,
-    ERROR=99
-} 
+    ERROR = 99
+}
 
 export type HistoryItem = any        //ToDo: make history events more specific?
 
@@ -20,10 +20,10 @@ export class DappletEngine {
 
     needReEvaluate: boolean = true
 
-    public eventHistory : HistoryItem[] = []
+    public eventHistory: HistoryItem[] = []
 
     constructor(public readonly id: ID, public readonly frameExecutables: DappletExecutable[], private _context: DappletContext) {
-        PubSub.subscribe(this.id, (e:any) => this.eventHistory.push(e)) 
+        PubSub.subscribe(this.id, (e: any) => this.eventHistory.push(e))
         PubSub.publish(this.id, State.INIT)
     }
 
@@ -59,7 +59,7 @@ export class DappletEngine {
                 framePayloads.forEach(framePayload => {
                     framePayload.forEach(([builder, data]) => {
                         ++n
-                        builder.signAndSend(data).then(() => { 
+                        builder.signAndSend(data).then(() => {
                             --n                                       //ToDo: publish TX_FINISHED? (will duplicate own builder's event)
                         }).catch(e => {
                             PubSub.publish(this.id, State.ERROR)   //ToDo: publish errmsg

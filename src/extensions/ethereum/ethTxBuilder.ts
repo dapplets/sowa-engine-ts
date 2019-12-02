@@ -6,7 +6,7 @@ import { EthSigner } from "./ethSigner"
 import * as PubSub from "pubsub-js"
 
 export type EthData = { to: string, data: string }
-export enum EthTxState { CREATED=1, SIGNED=2, SENT=3, REPLACED=4, MINED=5, REJECTED=6, ERR=99 } //ToDo: REORG?
+export enum EthTxState { CREATED = 1, SIGNED = 2, SENT = 3, REPLACED = 4, MINED = 5, REJECTED = 6, ERR = 99 } //ToDo: REORG?
 export type EthTxStateMsg = {
     txid?: BigInteger
     events?: any                  //ToDo: later: use Dapplets to display events 
@@ -43,10 +43,10 @@ export abstract class EthTxBuilder implements TxBuilder {
     // Writable `State` must be in every txBuilder own
     // Also, dappletFrameExecutor contains own state, where typed txMeta is available.
 
-    public signAndSend(data:EthData): Promise<void> {
-         return new Promise((resolve,reject)=>{
+    public signAndSend(data: EthData): Promise<void> {
+        return new Promise((resolve, reject) => {
             this.signer.signAndSend(data, (tx_state, msg) => {
-                PubSub.publish(this.topic, {tx_state, msg})
+                PubSub.publish(this.topic, { tx_state, msg })
                 if (tx_state == EthTxState.MINED) resolve()
                 else if (tx_state == EthTxState.REJECTED) reject(msg)
             })
