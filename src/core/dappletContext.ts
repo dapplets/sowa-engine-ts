@@ -1,4 +1,4 @@
-import { DappletRequest } from "../types/dappletRequest"
+import { MixedRequest, DappletRequest, EventRequest, RequestType, } from "../types/dappletRequest"
 import { DappletEngine, HistoryItem } from "./dappletEngine"
 import { ContextConfig } from '../types/contextConfig'
 import { DEFAULT_CONFIG } from "../defaultConfig"
@@ -52,8 +52,20 @@ export class DappletContext {
 
     engines: { [key: string]: DappletEngine } = {}
 
-    async processRequest(data: RequestData, configurator: EngineLinker): Promise<any> {
-        const request: DappletRequest = cbor.decode(data)
+    async processRequest(cborBinary: Buffer, configurator: EngineLinker): Promise<Buffer> {
+        const [requestType, request]: MixedRequest = cbor.decode(cborBinary)
+        let result
+        if (requestType == RequestType.DAPPLET) {              //Dapplet Request
+            result = this.processDappletRequest(request as DappletRequest, configurator?.onDappletRequest)
+        } else if (requestType == RequestType.FETCH_EVENTS) {       //fetch Event Request
+            result = this.processEventRequest(request as EventRequest, configurator?.onEventRequest)
+        } else {
+            result = requestType
+        }
+        return Promise.resolve(cbor.encode(result))
+    }
+
+    async processDappletRequest(request: DappletRequest, linker?: DappletRequestLinker): Promise<any> {
         // dapplet loading and prepare for execution
         const dapplets = await Promise.all(
             request.map(([dappletId, metadata], idx) =>
@@ -75,8 +87,8 @@ export class DappletContext {
             builders: Object.getOwnPropertyNames(f.transactions).map(tx => new Signable(f.transactions[tx]))
         }))
 
-        configurator.onDappletRequest && configurator.onDappletRequest(frames, () => engine.approve())
-        
+        linker?.(frames, () => engine.approve())
+
         this.engines[engineId] = engine
     }
 
@@ -90,10 +102,10 @@ export class DappletContext {
         return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10)
     }
 
-    async processHistoryRequest(cborBinary: Buffer): Promise<Buffer> {
-        const [engineId, startingFrom] = cbor.decode(cborBinary)
+    processEventRequest(request: EventRequest, linker?: EventPostProcessor): HistoryItem[] {
+        const [engineId, startingFrom] = request
         const events = this.fetchHistory(engineId, startingFrom)
-        return cbor.encode(events)
+        return linker?.(events) ?? []
     }
 
     //ToDo: create (extensible?/unified?) format for events. 

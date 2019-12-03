@@ -27,7 +27,7 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
       "@Ethernian",
       "https://pbs.twimg.com/profile_images/814615689868836864/cyMqCC1B_bigger.jpg"
     ]
-    const DAPPLET_REQUEST = [["5"], ["4", TX_META]]
+    const DAPPLET_REQUEST = [0, [["5"], ["4", TX_META]]] // 0 - RequestType.DAPPLET
 
     const bin = cbor.encode(DAPPLET_REQUEST)
     await context.processRequest(bin, {
