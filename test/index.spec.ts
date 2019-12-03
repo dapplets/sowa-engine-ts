@@ -34,15 +34,15 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
       onDappletRequest: (frames, approve) => {
         for (const frame of frames) {
           for (const view of frame.views) {
-            if (view.GLOBAL_NAME === "http://types.dapplets.org/view/grid-mustache/1.0") {
+            if (view.GLOBAL_NAME === extensions.views.gridMustache.HtmlGridMustacheRenderer.TARGET_VIEW_GLOBAL_NAME) {
               view.setRenderer(new extensions.views.gridMustache.HtmlGridMustacheRenderer())
-            } else if (view.GLOBAL_NAME === "http://types.dapplets.org/view/plain-mustache/1.0") {
+            } else if (view.GLOBAL_NAME === extensions.views.plainMustache.HtmlPlainMustacheRenderer.TARGET_VIEW_GLOBAL_NAME) {
               view.setRenderer(new extensions.views.plainMustache.HtmlPlainMustacheRenderer())
             }
           }
 
           for (const builder of frame.builders) {
-            if (builder.GLOBAL_NAME === "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0") {
+            if (builder.GLOBAL_NAME === WalletEthSigner.TARGET_TXBUILDER_GLOBAL_NAME) {
               builder.setSigner(new WalletEthSigner())
             }
           }

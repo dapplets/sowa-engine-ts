@@ -9,6 +9,8 @@ type HtmlCssParser = {
 }
 
 export class HtmlGridMustacheRenderer implements GridMustacheRenderer {
+    public static TARGET_VIEW_GLOBAL_NAME = "http://types.dapplets.org/view/grid-mustache/1.0"
+
     private _parse(template: GridMustacheTemplate, isRow?: boolean, prefix?: string) {
         if (!prefix) prefix = "cell"
         const result: HtmlCssParser = {
