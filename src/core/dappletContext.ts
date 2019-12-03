@@ -1,9 +1,12 @@
-import { DappletRequest } from "../types/dappletRequest"
+import { MixedRequest, DappletRequest, EventRequest, RequestType,  } from "../types/dappletRequest"
 import { DappletEngine, HistoryItem } from "./dappletEngine"
 import { ContextConfig } from '../types/contextConfig'
 import { DEFAULT_CONFIG } from "../defaultConfig"
 import { DappletTemplate } from '../types/dappletTemplate'
 import { DappletExecutable } from './dappletExecutable'
+import { View } from '../interfaces/view'
+import { TxBuilder } from '../interfaces/txBuilder'
+
 import * as cbor from "cbor"
 
 // DappletContext (DC) is created in the moment of a wallet starting.
@@ -11,6 +14,14 @@ import * as cbor from "cbor"
 // DC loads and verifies DappletTemplates and other resources referenced in Frames. And rejects the Request if any errors.
 
 export type ID = string     //Maybe BigInt is more suitable as Id
+
+type DappletRequestLinker = (views: Renderable[], builders: Signable[], approve: ()=>void) => void
+type EventPostProcessor = (events:any[])=>any[]
+    
+type EngineLinker = {
+    onDappletRequest?: DappletRequestLinker,
+    onEventRequest?: EventPostProcessor,
+}
 
 export class DappletContext {
     public readonly config: ContextConfig
@@ -22,8 +33,20 @@ export class DappletContext {
 
     engines: { [key: string]: DappletEngine } = {}
 
-    async processRequest(cborBinary: Buffer): Promise<DappletEngine> {
-        const request: DappletRequest = cbor.decode(cborBinary)
+    async processRequest(cborBinary: Buffer, configurator:EngineLinker): Promise<Buffer> { 
+        const [requestType, request]: MixedRequest = cbor.decode(cborBinary)
+        let result
+        if (requestType == RequestType.DAPPLET) {              //Dapplet Request
+            result = this.processDappletRequest(request as DappletRequest, configurator?.onDappletRequest)
+        } else if (requestType == RequestType.FETCH_EVENTS) {       //fetch Event Request
+            result = this.processEventRequest(request as EventRequest, configurator?.onEventRequest)
+        } else {
+            result = requestType
+        }
+        return Promise.resolve(cbor.encode(result))
+    }
+
+    async processDappletRequest(request: DappletRequest, linker?:DappletRequestLinker): Promise<string> {
         // dapplet loading and prepare for execution
         const dapplets = await Promise.all(
             request.map(([dappletId, metadata], idx) =>
@@ -36,15 +59,16 @@ export class DappletContext {
                     ))
             )
         )
-
         const engineId = this.newId()
-        const engine = new DappletEngine(engineId, dapplets, this)
-        this.engines[engineId] = engine
-        return engine // ToDo: what should processRequest return?
-        // ToDo: return { 
-        //    onDappletRequest: function(...), 
-        //    onFetchStatus: function(...), 
-        //}
+        let engine = new DappletEngine(engineId, dapplets, this)
+        this.engines[engineId] = engine 
+        
+        let views = dapplets.reduce((a, d) => a.concat(d.views), [] as View[])
+        let builders = dapplets.reduce((a, d) => a.concat(...Object.values(d.transactions)), [] as TxBuilder[])
+
+        linker?.( views, builders, engine.approve)
+
+        return engineId
     }
 
     //ToDo: clear distinguish between GUIDs and IDs
@@ -57,10 +81,10 @@ export class DappletContext {
         return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10)
     }
 
-    async processHistoryRequest(cborBinary: Buffer): Promise<Buffer> {
-        const [engineId, startingFrom] = cbor.decode(cborBinary)
-        const events = this.fetchHistory(engineId, startingFrom)
-        return cbor.encode(events)
+    processEventRequest(request: EventRequest, linker?:EventPostProcessor): HistoryItem[] {
+        const [engineId, startingFrom] = request
+        const events = this.fetchHistory(engineId, startingFrom)   
+        return linker?.(events) ?? []
     }
 
     //ToDo: create (extensible?/unified?) format for events. 
