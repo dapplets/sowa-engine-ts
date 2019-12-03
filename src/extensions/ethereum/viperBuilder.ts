@@ -7,7 +7,7 @@ import { Signer } from '../../interfaces/signer';
 // ToDo: maybe split Viper and Solidity builders into different extensions?
 export class ViperBuilder extends EthTxBuilder {
     public static GLOBAL_NAME = "http://types.dapplets.org/ethereum/txbuilders/viper/1.0"
-    constructor(public readonly txTemplate: EthTxTemplate, state: State, signer: Signer, topic: string) {
-        super(txTemplate, new StateProxy(state, new ViperTypeConverter()), signer, topic)
+    constructor(txTemplate: EthTxTemplate, state: State, topic: string) {
+        super(txTemplate, new StateProxy(state, new ViperTypeConverter()), topic)
     }
 }

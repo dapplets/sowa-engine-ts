@@ -81,7 +81,7 @@ export class DappletExecutable {
             const builder = extensions.map(e => {
                 const ctor = e.txBuilders.find(b => b.GLOBAL_NAME == globalName)
                 // ToDo: Core shouldn't know about e.signer. Extension should take care about Signer-Builder relationship.
-                return ctor && new ctor(txDecls[builderName], this.state, e.signer, this.parentTopic + "." + builderName)
+                return ctor && new ctor(txDecls[builderName], this.state, this.parentTopic + "." + builderName)
             }).find(b => b)
             if (!builder) throw Error(`TxBuilder "${globalName}" is not supported.`)
             this.transactions[builderName] = builder

@@ -28,13 +28,14 @@ export type EthTxTemplate = TxTemplate & {
 }
 
 export abstract class EthTxBuilder implements TxBuilder {
+    public signer?: EthSigner
     public txConfig: any
     private status: EthTxState = EthTxState.CREATED
     private config: EthTxConfig
 
     // ToDo: the interface of a constructor is becoming difficult... maybe it's a signal for reorg?
     // ToDo: use publisher() callback around PubSub instead of this.topic. Reasoning: topic is a internals of Core implementation, xxxBuilder is an additional module to core.
-    constructor(public readonly txTemplate: EthTxTemplate, protected state: StateProxy, public readonly signer: EthSigner, private readonly topic: string) {
+    constructor(public readonly txTemplate: EthTxTemplate, protected state: StateProxy, private readonly topic: string) {
         // ToDo: validate EthTxTemplate syntax?
 
         this.config = {
@@ -54,7 +55,7 @@ export abstract class EthTxBuilder implements TxBuilder {
     public signAndSend(data: EthData): Promise<void> {
         return new Promise((resolve, reject) => {
             //ToDo: BIG: add EthSigner Event "Tx_CREATED" and write transaction hash into State.
-            this.signer.signAndSend(data, (tx_state, msg) => {
+            this.signer?.signAndSend(data, (tx_state, msg) => {
                 PubSub.publish(this.topic, { tx_state, msg })
                 if (tx_state == EthTxState.MINED) resolve()
                 else if (tx_state == EthTxState.REJECTED) reject(msg)

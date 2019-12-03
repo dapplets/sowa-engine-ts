@@ -9,6 +9,7 @@ export type Glyph = {
 export enum GlyphType { TEXT, EXPR }
 
 export interface View {
+    renderer?: any
     //glyphs: Glyph[]
     //parse(): void
     render(): void

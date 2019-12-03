@@ -5,12 +5,42 @@ import { DEFAULT_CONFIG } from "../defaultConfig"
 import { DappletTemplate } from '../types/dappletTemplate'
 import { DappletExecutable } from './dappletExecutable'
 import * as cbor from "cbor"
+import { View } from 'src/interfaces/view'
+import { TxBuilder } from 'src/interfaces/txBuilder'
 
 // DappletContext (DC) is created in the moment of a wallet starting.
 // DC is Singleton class.
 // DC loads and verifies DappletTemplates and other resources referenced in Frames. And rejects the Request if any errors.
 
 export type ID = string     //Maybe BigInt is more suitable as Id
+
+type RequestData = Buffer
+type DappletRequestLinker = (frames: { views: Renderable[], builders: Signable[] }[], approveCallback: () => void) => void
+type EventPostProcessor = (events: any[]) => any[]
+type EngineLinker = {
+    onDappletRequest?: DappletRequestLinker,
+    onEventRequest?: EventPostProcessor,
+}
+
+class Renderable {
+    GLOBAL_NAME: string
+
+    constructor(private _view: View) {
+        this.GLOBAL_NAME = Object.getPrototypeOf(this._view).constructor.GLOBAL_NAME
+    }
+
+    setRenderer(r: any) { this._view.renderer = r }
+}
+
+class Signable {
+    GLOBAL_NAME: string
+
+    constructor(private _txBuilder: TxBuilder) {
+        this.GLOBAL_NAME = Object.getPrototypeOf(this._txBuilder).constructor.GLOBAL_NAME
+    }
+
+    setSigner(s: any) { this._txBuilder.signer = s }
+}
 
 export class DappletContext {
     public readonly config: ContextConfig
@@ -22,8 +52,8 @@ export class DappletContext {
 
     engines: { [key: string]: DappletEngine } = {}
 
-    async processRequest(cborBinary: Buffer): Promise<DappletEngine> {
-        const request: DappletRequest = cbor.decode(cborBinary)
+    async processRequest(data: RequestData, configurator: EngineLinker): Promise<any> {
+        const request: DappletRequest = cbor.decode(data)
         // dapplet loading and prepare for execution
         const dapplets = await Promise.all(
             request.map(([dappletId, metadata], idx) =>
@@ -39,12 +69,15 @@ export class DappletContext {
 
         const engineId = this.newId()
         const engine = new DappletEngine(engineId, dapplets, this)
+
+        const frames = engine.frameExecutables.map(f => ({
+            views: f.views.map(v => new Renderable(v)),
+            builders: Object.getOwnPropertyNames(f.transactions).map(tx => new Signable(f.transactions[tx]))
+        }))
+
+        configurator.onDappletRequest && configurator.onDappletRequest(frames, () => engine.approve())
+        
         this.engines[engineId] = engine
-        return engine // ToDo: what should processRequest return?
-        // ToDo: return { 
-        //    onDappletRequest: function(...), 
-        //    onFetchStatus: function(...), 
-        //}
     }
 
     //ToDo: clear distinguish between GUIDs and IDs

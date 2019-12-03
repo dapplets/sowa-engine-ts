@@ -2,13 +2,16 @@ import { ContextConfig } from './types/contextConfig'
 import { GithubDappletProvider } from './providers/githubDappletProvider'
 import { CameraFormatter } from './extensions/formatters/cameraFormatter'
 import { EthereumExtension } from './extensions/ethereum'
-import { NOPEthSigner } from './core/NOPSigner'
+import { extensions } from '.'
 
 const DEFAULT_CONFIG: ContextConfig = {
     providers: [new GithubDappletProvider()], // new SwarmDappletProvider()
-    views: [],
+    views: [
+        extensions.views.gridMustache.GridMustacheView,
+        extensions.views.plainMustache.PlainMustacheView
+    ],
     formatters: [CameraFormatter],
-    extensions: [new EthereumExtension(new NOPEthSigner())]
+    extensions: [new EthereumExtension()]
     // ToDo: unify classes ([new X] vs [X])
 }
 

@@ -8,7 +8,7 @@ type PlaintMustacheTemplate = string
 export class PlainMustacheView implements View { //  extends BaseView
     public static readonly GLOBAL_NAME = "http://types.dapplets.org/view/plain-mustache/1.0"
 
-    protected renderer?: PlainMustacheRenderer
+    public renderer?: PlainMustacheRenderer
 
     constructor(protected viewTemplate: ViewTemplate<PlaintMustacheTemplate>, protected state: State) { }
 
@@ -37,10 +37,5 @@ export class PlainMustacheView implements View { //  extends BaseView
 
     public render(): void {
         this.renderer?.render(this.parse())
-    }
-
-    public static attachRenderer(renderer: PlainMustacheRenderer) {
-        PlainMustacheView.prototype.renderer = renderer
-        return PlainMustacheView
     }
 }

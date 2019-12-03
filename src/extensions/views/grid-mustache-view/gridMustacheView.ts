@@ -8,7 +8,7 @@ export type GridMustacheTemplate = (string | GridMustacheTemplate)[]
 export class GridMustacheView implements View {
     public static readonly GLOBAL_NAME = "http://types.dapplets.org/view/grid-mustache/1.0"
 
-    protected renderer?: GridMustacheRenderer
+    public renderer?: GridMustacheRenderer
 
     constructor(protected viewTemplate: ViewTemplate<GridMustacheTemplate>, protected state: State) { }
 
@@ -41,10 +41,5 @@ export class GridMustacheView implements View {
     public render(): void {
         const replacedTemplate = this._parseRow(this.viewTemplate.template)
         this.renderer?.render(replacedTemplate)
-    }
-
-    public static attachRenderer(renderer: GridMustacheRenderer) {
-        GridMustacheView.prototype.renderer = renderer
-        return GridMustacheView
     }
 }

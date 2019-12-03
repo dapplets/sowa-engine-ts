@@ -10,13 +10,13 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
   it('send dapplet request', async () => {
     const context = new DappletContext({
       providers: [new TestDappletProvider()],
-      extensions: [new extensions.EthereumExtension(new WalletEthSigner())],
+      extensions: [new extensions.EthereumExtension()],
       views: [
         // ToDo: 1 Too long namespaces' length
         // ToDo: 2 Perhaps, renderers should be moved from the singleton context config, because they depend on instances of views. 
         //       We can not determine where the parsed template came from inside the singleton renderer.
-        extensions.views.gridMustache.GridMustacheView.attachRenderer(new extensions.views.gridMustache.HtmlGridMustacheRenderer()),
-        extensions.views.plainMustache.PlainMustacheView.attachRenderer(new extensions.views.plainMustache.HtmlPlainMustacheRenderer())
+        extensions.views.gridMustache.GridMustacheView,
+        extensions.views.plainMustache.PlainMustacheView
       ]
     })
 
@@ -30,7 +30,28 @@ describe('// ---------------- @dapplets/dapplet-engine-ts --------------- //', (
     const DAPPLET_REQUEST = [["5"], ["4", TX_META]]
 
     const bin = cbor.encode(DAPPLET_REQUEST)
-    await context.processRequest(bin)
+    await context.processRequest(bin, {
+      onDappletRequest: (frames, approve) => {
+        for (const frame of frames) {
+          for (const view of frame.views) {
+            if (view.GLOBAL_NAME === "http://types.dapplets.org/view/grid-mustache/1.0") {
+              view.setRenderer(new extensions.views.gridMustache.HtmlGridMustacheRenderer())
+            } else if (view.GLOBAL_NAME === "http://types.dapplets.org/view/plain-mustache/1.0") {
+              view.setRenderer(new extensions.views.plainMustache.HtmlPlainMustacheRenderer())
+            }
+          }
+
+          for (const builder of frame.builders) {
+            if (builder.GLOBAL_NAME === "http://types.dapplets.org/ethereum/txbuilders/solidity/1.0") {
+              builder.setSigner(new WalletEthSigner())
+            }
+          }
+        }
+
+        // Simulation of Approve button clicking.
+        setTimeout(() => approve(), 3000)
+      }
+    })
 
     // ToDo: 3 (solution for todo2) May be `processRequest()` should not return simple cbor response for browser.
     // ToDo: 4 (solution for todo2) split `processRequest` into two methods
