@@ -18,11 +18,13 @@ export class DappletExecutable {
     public transactions: { [key: string]: TxBuilder } = {}
     public views: View[] = []
     public activeView: View
+    public viewTemplates: { [globalName: string]: any } = {}
 
     constructor(template: DappletTemplate, txMetadata: any[], config: ContextConfig, private parentTopic: string) {
         this.aliases = this._createAliasMap(template.aliases)
         this.state = this._createState(template.variables || {}, txMetadata)
         this._createCompatibleViews(template.views, config.views || [])
+        this._createViewTemplatesMapping(template.views)
         this._createTxBuilders(template.transactions, config.extensions || [])
         this._validate()
 
@@ -68,9 +70,17 @@ export class DappletExecutable {
                 continue
             }
             const view = new ctor(viewDecl, this.state)
-            this.state.onUpdate(() => view.render())
-            view.render()
+            //this.state.onUpdate(() => view.render())
+            //view.render()
             this.views.push(view)
+        }
+    }
+
+    private _createViewTemplatesMapping(viewDecls: ViewTemplate<any>[]) {
+        for (const viewDecl of viewDecls) {
+            const globalName = this.aliases.get(viewDecl.type)
+            if (!globalName) throw Error(`Alias for ${viewDecl.type} is not defined in usings.`)
+            this.viewTemplates[globalName] = viewDecl.template
         }
     }
 

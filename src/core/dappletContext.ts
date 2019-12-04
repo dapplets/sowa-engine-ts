@@ -1,6 +1,6 @@
 import * as cbor from "cbor"
 
-import { MixedRequest, DappletRequest, EventRequest, RequestType, } from "../types/dappletRequest"
+import { MixedRequest, DappletRequest, EventRequest, RequestType } from "../types/dappletRequest"
 import { DappletEngine, HistoryItem } from "./dappletEngine"
 import { ContextConfig } from '../types/contextConfig'
 import { DEFAULT_CONFIG } from "../defaultConfig"
@@ -8,6 +8,7 @@ import { DappletTemplate } from '../types/dappletTemplate'
 import { DappletExecutable } from './dappletExecutable'
 import { Renderable } from '../interfaces/renderable'
 import { Signable } from '../interfaces/signable'
+import { View } from '../interfaces/view'
 
 // DappletContext (DC) is created in the moment of a wallet starting.
 // DC is Singleton class.
@@ -17,9 +18,12 @@ export type ID = string     //Maybe BigInt is more suitable as Id
 
 type DappletRequestLinker = (frames: { views: Renderable[], builders: Signable[] }[], approveCallback: () => void) => void
 type EventPostProcessor = (events: any[]) => any[]
+type ViewRenderer = (frames: { templates: { [globalName: string]: any }, data: { [key: string]: any } }[]) => void
+
 type EngineLinker = {
     onDappletRequest?: DappletRequestLinker,
     onEventRequest?: EventPostProcessor,
+    onViewChanged?: ViewRenderer
 }
 
 export class DappletContext {
@@ -36,7 +40,7 @@ export class DappletContext {
         const [requestType, request]: MixedRequest = cbor.decode(cborBinary)
         let result
         if (requestType == RequestType.DAPPLET) {              //Dapplet Request
-            result = this.processDappletRequest(request as DappletRequest, configurator?.onDappletRequest)
+            result = this.processDappletRequest(request as DappletRequest, configurator?.onDappletRequest, configurator?.onViewChanged)
         } else if (requestType == RequestType.FETCH_EVENTS) {       //fetch Event Request
             result = this.processEventRequest(request as EventRequest, configurator?.onEventRequest)
         } else {
@@ -45,7 +49,7 @@ export class DappletContext {
         return Promise.resolve(cbor.encode(result))
     }
 
-    async processDappletRequest(request: DappletRequest, linker?: DappletRequestLinker): Promise<any> {
+    async processDappletRequest(request: DappletRequest, linker?: DappletRequestLinker, renderer?: ViewRenderer): Promise<any> {
         // dapplet loading and prepare for execution
         const dapplets = await Promise.all(
             request.map(([dappletId, metadata], idx) =>
@@ -62,18 +66,34 @@ export class DappletContext {
         const engineId = this.newId()
         const engine = new DappletEngine(engineId, dapplets, this)
 
-        const frames = engine.frameExecutables.map(f => ({
-            views: f.views.map(v => ({
-                GLOBAL_NAME: Object.getPrototypeOf(v).constructor.GLOBAL_NAME,
-                setRenderer: (r: any) => { v.renderer = r }
-            })),
-            builders: Object.getOwnPropertyNames(f.transactions).map(tx => ({
-                GLOBAL_NAME: Object.getPrototypeOf(f.transactions[tx]).constructor.GLOBAL_NAME,
-                setSigner: (s: any) => { f.transactions[tx].signer = s }
+        if (linker) {
+            const frames = engine.frameExecutables.map(f => ({
+                views: f.views.map(v => ({
+                    GLOBAL_NAME: Object.getPrototypeOf(v).constructor.GLOBAL_NAME,
+                    setRenderer: (r: any) => { v.renderer = r }
+                })),
+                builders: Object.getOwnPropertyNames(f.transactions).map(tx => ({
+                    GLOBAL_NAME: Object.getPrototypeOf(f.transactions[tx]).constructor.GLOBAL_NAME,
+                    setSigner: (s: any) => { f.transactions[tx].signer = s }
+                }))
             }))
-        }))
 
-        linker?.(frames, () => engine.approve())
+            linker(frames, () => engine.approve())
+        }
+
+        if (renderer) {
+            const stateUpdateHandler = () => {
+                const frames = engine.frameExecutables.map(f => ({
+                    templates: f.viewTemplates,
+                    data: f.state.toObject()
+                }))
+
+                renderer(frames)
+            }
+
+            engine.frameExecutables.forEach((f) => f.state.onUpdate(() => stateUpdateHandler()))
+            stateUpdateHandler()
+        }
 
         this.engines[engineId] = engine
     }

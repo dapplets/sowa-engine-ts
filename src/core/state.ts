@@ -89,4 +89,10 @@ export class State {
             default: throw Error(`The formatter "${formatter}" is not supported.`)
         }
     }
+
+    public toObject(): object {
+        const obj = {}
+        this._map.forEach((v, k) => { obj[k] = v })
+        return obj
+    }
 }
