@@ -3,6 +3,8 @@
 !! 1. BIG: ethTxBuilder:53: add EthSigner Event "Tx_CREATED" "Tx_" write transaction hash into State.
 !! 2. DIFFICULT: Think about chain REORGs
 !! 3. Must be State=>Storage? What if Wallet switches off between transactions?
+!! 4. "View" may be the wrong name: view contains parsed templates and formatter GUIDs but no visual representations.
+
 
 0. More Specific Name for State. ExecutableState is too long?
 1. DappletTemplate: transform views declaration from array to object, where object's properties is a type of views.

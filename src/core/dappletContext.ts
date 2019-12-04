@@ -68,6 +68,8 @@ export class DappletContext {
 
         if (linker) {
             const frames = engine.frameExecutables.map(f => ({
+                // ToDo: simplify it. return View and TxBuilder's instances.
+                // ToDo: View and TxBuilder interfaces should extend Renderable and Signable.
                 views: f.views.map(v => ({
                     GLOBAL_NAME: Object.getPrototypeOf(v).constructor.GLOBAL_NAME,
                     setRenderer: (r: any) => { v.renderer = r }
