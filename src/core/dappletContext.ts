@@ -1,9 +1,12 @@
-import { DappletProvider } from "../../interfaces/dappletProvider";
-import { DappletRequest } from "../../types/dappletRequest";
+import { DappletProvider } from "../interfaces/dappletProvider";
+import { DappletRequest } from "../types/dappletRequest";
 import { DappletEngine } from "./dappletEngine";
-import { DappletActivity } from "../views/dappletActivity";
-import { ContextConfig } from 'src/types/contextConfig';
-import { GithubDappletProvider } from '../providers/githubDappletProvider';
+import { DappletActivity } from "./dappletActivity";
+import { ContextConfig } from '../types/contextConfig';
+import { DEFAULT_CONFIG } from "../defaultConfig";
+import { FeaturesRegistry } from './featuresRegistry';
+import { DappletTxResult } from '../interfaces/dappletTxResult';
+import { FrameStatus } from '../types/statusEnum';
 
 // создается в момент старта кошелька и singleton
 // к нему приходят request'ы
@@ -12,27 +15,24 @@ import { GithubDappletProvider } from '../providers/githubDappletProvider';
 // instantated once on Wallet start
 export class DappletContext {
     private _dappletProvider: DappletProvider;
+    private _featuresRegistry: FeaturesRegistry;
 
-    constructor(config: ContextConfig) {
-        switch (config.source) {
-            case "github":
-                this._dappletProvider = new GithubDappletProvider();                
-                break;
-        
-            default:
-                this._dappletProvider = new GithubDappletProvider();    
-                break;
-        }
+    constructor(config: ContextConfig = DEFAULT_CONFIG) {
+        config = { ...DEFAULT_CONFIG, ...config };
+        this._dappletProvider = config.provider!;
+        this._featuresRegistry = config.features!;
     }
 
     //typeSupport: Map<PID,(rawData:string,type:PID)=>typedValue> = new Map
 
-    async processRequest(request: DappletRequest) {
-        const engine = new DappletEngine(request);
+    async processRequest(request: DappletRequest): Promise<DappletTxResult> {
+        const engine = new DappletEngine(request, this._featuresRegistry);
+        engine.onStatusChanged((statuses) => console.log(statuses.map(s => FrameStatus[s]).join(", ")));
         await engine.load(this._dappletProvider);
-        if (!engine.validate()) throw new Error("Invalid dapplet");
-
-        const activity = new DappletActivity(request, this);
+        engine.validate();
+        
+        //const activity = new DappletActivity(request, this);
+        return {};
     }
 
     async loadResource(id: string): Promise<ArrayBuffer> {

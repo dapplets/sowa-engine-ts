@@ -1,5 +1,5 @@
-import { Specifiable } from './specifiable';
+import { Feature } from './feature';
 
-export interface Formatter extends Specifiable { // ToDo: придумать другое имя
+export interface Formatter extends Feature { // ToDo: придумать другое имя
     exec(input: any): any;
 }

@@ -21,10 +21,11 @@
         "importHelpers": true,
         "strictNullChecks": true,
         "suppressImplicitAnyIndexErrors": true,
-        "noUnusedLocals": true,
+        "noUnusedLocals": false,
         "resolveJsonModule": true,
         "outDir": "lib",
-        "rootDir": "src"
+        "rootDir": "src",
+        "experimentalDecorators": true
     },
     "include": ["./src/**/*"]
 }
